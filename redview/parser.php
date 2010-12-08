@@ -71,6 +71,7 @@ class RedView_Parser {
   public $currentDocument=null;
   
   public function parseFile ($file) {
+    // if (!$file_exists) debug_print_backtrace();
     $xml = file_get_contents($file);
     return $this->parseXml ($xml);
   }
@@ -80,7 +81,6 @@ class RedView_Parser {
     $doc = new DOMDocument();
     $doc->preserveWhiteSpace = $this->preserveWhiteSpace;
     $doc->formatOutput = $this->formatOutput;
-     if (!$xml) debug_print_backtrace();
     $doc->loadXML($xml);
     $xpath = new DOMXpath($doc);
     $list = $xpath->evaluate("//*");

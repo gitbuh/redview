@@ -45,7 +45,7 @@ class RedView_Router {
 
     // parse the file with RedView
     // requested a non-existing top level path; redirect to front page
-    if (!file_exists("$viewDir/$path")) $this->redirect('', true);
+    if (!$path || !file_exists("$viewDir/$path")) $this->redirect('', true);
 
     // normal page
     echo RedView::parse($path);
