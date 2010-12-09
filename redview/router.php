@@ -58,16 +58,16 @@ class RedView_Router {
     if ($enc) {
       $json = RedView::decrypt($enc);
       $a = json_decode($json);
-      list ($action, $class, $path) = $a;
+      $_REQUEST['_rv:action'] = $a[0];
+      $_REQUEST['_rv:class'] = $a[1];
+      $_REQUEST['_rv:path'] = $a[2];
     }
-    else {
-      $action = @$_REQUEST['_rv:action']; 
-      $class  = @$_REQUEST['_rv:class']; 
-      $path   = @$_REQUEST['_rv:path'];
-    }
+    
+    $action = @$_REQUEST['_rv:action']; 
+    $class  = @$_REQUEST['_rv:class']; 
+    $path   = @$_REQUEST['_rv:path'];
     
     if (!($action && $class && $path)) return;
-    
     try {
       $c = new ReflectionClass($class); 
       $m = new ReflectionMethod($class, $action); 
