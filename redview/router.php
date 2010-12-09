@@ -50,54 +50,6 @@ class RedView_Router {
     // normal page
     echo RedView::parse($path);
   }
-  
-  public function handleAction () {
-  
-    $enc = @$_REQUEST['_rv:data']; 
-    
-    if ($enc) {
-      $json = RedView::decrypt($enc);
-      $a = json_decode($json);
-      $_REQUEST['_rv:action'] = $a[0];
-      $_REQUEST['_rv:class'] = $a[1];
-      $_REQUEST['_rv:path'] = $a[2];
-    }
-    
-    $action = @$_REQUEST['_rv:action']; 
-    $class  = @$_REQUEST['_rv:class']; 
-    $path   = @$_REQUEST['_rv:path'];
-    
-    if (!($action && $class && $path)) return;
-    try {
-      $c = new ReflectionClass($class); 
-      $m = new ReflectionMethod($class, $action); 
-    }
-    catch (ReflectionException $e) { 
-      RedView::redirect($path); 
-    }
-    
-    if (!($m->isPublic() && $m->isStatic() && $c->implementsInterface('RedView_IRemote'))) return;
-    
-    @$_SESSION['_rv']['fields']         || $_SESSION['_rv']['fields'] = array();
-    @$_SESSION['_rv']['fields'][$class] || $_SESSION['_rv']['fields'][$class] = array();
-    $_SESSION['_rv']['fields'][$class] = array_merge($_SESSION['_rv']['fields'][$class], $_REQUEST);
-    
-    $result = call_user_func(array($class, $action));
-    
-    RedView::redirect($path);
-    
-  }
-  
-  
-  /** 
-   *  redirect browser to another URL
-   */
-  public function endAction ($slot=null, $value='') {
-    $path = @$_REQUEST['_rv:path'];
-    $path || $path = '/';
-    if ($slot) RedView::set($slot, $value);
-    RedView::redirect($path);
-  }
 
   
   /** 

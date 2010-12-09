@@ -10,11 +10,12 @@ class RedView_Toolbox {
   public $crypto;
   public $misc;
 
-  public function __construct ($parser=null, $router=null, $crypto=null, $settings=null) {
+  public function __construct () {
   
     $this->parser = new RedView_Parser();
     $this->router = new RedView_Router();
     $this->crypto = new RedView_Crypto();
+    $this->action = new RedView_Action();
     $this->misc = new RedView_Settings();
     
     if (!file_exists('app.ini')) return;

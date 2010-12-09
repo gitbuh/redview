@@ -19,7 +19,7 @@ class RedView {
 
   public static function setup() {
     if (!self::$ready) self::init(); 
-    self::$toolbox->router->handleAction();
+    self::$toolbox->action->handle();
     self::$toolbox->router->loadPage();
   }
   
@@ -43,7 +43,7 @@ class RedView {
   }
   
   public static function end ($k, $v) {
-    self::$toolbox->router->endAction($k, $v);
+    self::$toolbox->action->end($k, $v);
   }
   
   public static function toXml ($string) { 

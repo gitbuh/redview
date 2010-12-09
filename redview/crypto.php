@@ -4,27 +4,27 @@
 */
 class RedView_Crypto {
 
-  public $enabled = false;
+  public $enabled = true;
   public $password='1234';
-  public $initVector='qwertyuiopasdfghjklzxcvbnm';
 
   /**
       Encrypt some text
       @param string $text to encrypt
   */
-  public function encrypt ($text) {
-    $r = openssl_encrypt($text, 'DES3', $this->password, false, $this->initVector);
-    return $r;
+  public function encrypt ($text, $initVector='12345678') {
+    if (!$this->enabled) return $text;
+    return openssl_encrypt($text, 'DES3', $this->password, false, $initVector);
   }
   
   /**
       Decrypt base64 encoded encrypted text
       @param string $text base64-encoded string to decrypt
   */
-  public function decrypt ($text) {
-    $r = openssl_decrypt($text, 'DES3', $this->password, false, $this->initVector);
-    return $r;
+  public function decrypt ($text, $initVector='12345678') {
+    if (!$this->enabled) return $text;
+    return openssl_decrypt($text, 'DES3', $this->password, false, $initVector);
   }
+  
   
 }
 
