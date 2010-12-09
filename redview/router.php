@@ -52,10 +52,20 @@ class RedView_Router {
   }
   
   public function handleAction () {
-    $action = @$_REQUEST['_rv:action']; 
-    $class  = @$_REQUEST['_rv:class']; 
-    $path   = @$_REQUEST['_rv:path'];
   
+    $enc = @$_REQUEST['_rv:data']; 
+    
+    if ($enc) {
+      $json = RedView::decrypt($enc);
+      $a = json_decode($json);
+      list ($action, $class, $path) = $a;
+    }
+    else {
+      $action = @$_REQUEST['_rv:action']; 
+      $class  = @$_REQUEST['_rv:class']; 
+      $path   = @$_REQUEST['_rv:path'];
+    }
+    
     if (!($action && $class && $path)) return;
     
     try {

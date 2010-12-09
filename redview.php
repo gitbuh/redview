@@ -54,6 +54,15 @@ class RedView {
     return RedView_Xml::fromXml($xml);
   }
   
+  public static function encrypt ($text) {
+    return self::$toolbox->crypto->encrypt($text);
+  }
+  
+  public static function decrypt ($text) {
+    return self::$toolbox->crypto->decrypt($text);
+  }
+  
+  
   
 }
 
