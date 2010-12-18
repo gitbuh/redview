@@ -53,7 +53,7 @@ The following sections define some terminology used in documenting and
 discussing RedView.
 
 
-<a id="Action">#</a>
+<p id="Action"></p>
 
 -   ### Action
 
@@ -64,7 +64,7 @@ discussing RedView.
     and RedView will handle the rest.
 
 
-<a id="Application">#</a>
+<p id="Application"></p>
 
 -   ### Application
 
@@ -72,7 +72,7 @@ discussing RedView.
     working on. For an example application, see [RedSkeleton].
 
 
-<a id="Cache">#</a>
+<p id="Cache"></p>
 
 -   ### Cache
 
@@ -80,7 +80,7 @@ discussing RedView.
     resulting PHP script to a filesystem cache.
 
 
-<a id="Controller">#</a>
+<p id="Controller"></p>
 
 -   ### Controller
 
@@ -88,7 +88,7 @@ discussing RedView.
     should extend the *RedView* class. 
     
 
-<a id="Custom_Tag">#</a>
+<p id="Custom_Tag"></p>
 
 -   ### Custom Tag
 
@@ -115,7 +115,7 @@ discussing RedView.
     >   calling a static method of your custom tag. If you need 
     >   to access the tag's contents at runtime, use output buffering.
 
-<a id="Markup">#</a>
+<p id="Markup"></p>
 
 -   ### Markup
 
@@ -134,7 +134,7 @@ discussing RedView.
     >   Sending HTML to the browser after receiving an HTTP post instead of
     >   redirecting causes usability issues with the browser's navigation controls.
 
-<a id="Processing_Instruction">#</a>
+<p id="Processing_Instruction"></p>
 
 -   ### Processing Instruction
 
@@ -158,7 +158,7 @@ discussing RedView.
     >   [slot] instead of putting processing instructions inside of tag attributes.
 
 
-<a id="View">#</a>
+<p id="View"></p>
 
 -   ### View
 
@@ -169,7 +169,7 @@ discussing RedView.
     -   a file named *viewname*.html containing some [markup].
 
 
-<a id="View_State">#</a>
+<p id="View_State"></p>
 
 -   ### View State
 
