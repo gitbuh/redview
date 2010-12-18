@@ -103,17 +103,17 @@ discussing RedView.
     For example, by default RedView will append a processing instruction to a
     form's children via a custom "form" tag.
 
->   **Hint**
->
->   Custom tags should not modify the markup in a way that 
->   reflects the state of the current session or request.
->
->   Although this may work during testing, things will break 
->   once caching is enabled. 
->
->   Instead, create a processing instruction or two, possibly 
->   calling a static method of your custom tag. If you need 
->   to access the tag's contents at runtime, use output buffering.
+    >   **Hint**
+    >
+    >   Custom tags should not modify the markup in a way that 
+    >   reflects the state of the current session or request.
+    >
+    >   Although this may work during testing, things will break 
+    >   once caching is enabled. 
+    >
+    >   Instead, create a processing instruction or two, possibly 
+    >   calling a static method of your custom tag. If you need 
+    >   to access the tag's contents at runtime, use output buffering.
 
 <p id="Markup"></p>
 
@@ -129,10 +129,10 @@ discussing RedView.
     In other words, *$this* will refer to an instance of the controller for
     this [view], and *self* will refer to the controller class itself.
  
->   **Hint**
->
->   Sending HTML to the browser after receiving an HTTP post instead of
->   redirecting causes usability issues with the browser's navigation controls.
+    >   **Hint**
+    >
+    >   Sending HTML to the browser after receiving an HTTP post instead of
+    >   redirecting causes usability issues with the browser's navigation controls.
 
 <p id="Processing_Instruction"></p>
 
@@ -145,17 +145,17 @@ discussing RedView.
           echo $user->name;
         ?>
 
->   **Hint**
->
->   Processing instructions should not appear in HTML tag attributes in your
->   [markup].
->
->   The markup is parsed as XML before it is parsed as PHP, so the outcome is
->   at the mercy of PHP's XML writer (which will dutifully recode your intended
->   PHP code as XML entities). 
->
->   Create a [custom tag] or store the string content of the opening tag in a
->   [slot] instead of putting processing instructions inside of tag attributes.
+    >   **Hint**
+    >
+    >   Processing instructions should not appear in HTML tag attributes in your
+    >   [markup].
+    >
+    >   The markup is parsed as XML before it is parsed as PHP, so the outcome is
+    >   at the mercy of PHP's XML writer (which will dutifully recode your intended
+    >   PHP code as XML entities). 
+    >
+    >   Create a [custom tag] or store the string content of the opening tag in a
+    >   [slot] instead of putting processing instructions inside of tag attributes.
 
 
 <p id="View"></p>
@@ -204,7 +204,7 @@ See Also
 
 ----------------------------------------------------------
 
->   *More documentation to come...*
+*More documentation to come...*
 
 
 
