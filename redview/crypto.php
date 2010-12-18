@@ -11,7 +11,7 @@ class RedView_Crypto {
       Encrypt some text
       @param string $text to encrypt
   */
-  public function encrypt ($text, $initVector='12345678') {
+  public function encrypt ($text, $initVector) {
     if (!$this->enabled) return $text;
     return openssl_encrypt($text, 'DES3', $this->password, false, $initVector);
   }
@@ -20,7 +20,7 @@ class RedView_Crypto {
       Decrypt base64 encoded encrypted text
       @param string $text base64-encoded string to decrypt
   */
-  public function decrypt ($text, $initVector='12345678') {
+  public function decrypt ($text, $initVector) {
     if (!$this->enabled) return $text;
     return openssl_decrypt($text, 'DES3', $this->password, false, $initVector);
   }

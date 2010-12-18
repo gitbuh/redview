@@ -17,13 +17,18 @@ class RedView_Tag_Form extends RedView_ATag {
     $doc    = $parser->currentDocument;
     $node   = $parser->currentNode;
     
-    @list ($a1, $a2) = explode('::', $this->attribs['action']);
-    $class  = $a2 ? "'$a1'" : 'get_class($this)';
-    $method = $a2 ? "'$a2'" : "'$a1'";
-    $path = @array_shift(explode('?',$_SERVER['REQUEST_URI']));
+    $callback = $this->attribs['action'];
+    $a = $doc->createAttribute('method');
+    $a->value = 'POST';
+    $node->appendChild($a);
     
+    $a = $doc->createAttribute('action');
+    $a->value = '.';
+    $node->appendChild($a);
     
-    $pi = $doc->createProcessingInstruction('php', "echo \"<input type='hidden' name='_rv:data' value=\".RedView_Action::encodeRequest($method, $class).\" />\"");
+    $val = "RedView_Action::encodeRequest(\$this, '$callback')";
+    $pi = $doc->createProcessingInstruction('php', 
+      "echo \"<input type='hidden' name='_rv:data' value='\".$val.\"' />\"");
 
     $node->appendChild($pi);
     

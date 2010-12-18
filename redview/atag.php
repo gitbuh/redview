@@ -1,6 +1,6 @@
 <?php
 
-abstract class RedView_ATag {
+abstract class RedView_ATag extends RedView_ABase {
 
   /**
       Tag (node) name
@@ -55,7 +55,6 @@ abstract class RedView_ATag {
   */
   public function suffixNode ($parser) {
   }
-  
   
 }
 

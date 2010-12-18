@@ -1,6 +1,6 @@
 <?php 
 
-class RedView_Parser {
+class RedView_Parser extends RedView_ABase {
 
   public $cacheOn  = false;  // set to true for production
   public $cacheDir = '/tmp/rv-cache';
@@ -81,14 +81,17 @@ class RedView_Parser {
     $doc = new DOMDocument();
     $doc->preserveWhiteSpace = $this->preserveWhiteSpace;
     $doc->formatOutput = $this->formatOutput;
-    $doc->loadXML($xml);
+    $doc->loadXML("<fakeroot>$xml</fakeroot>");
     $xpath = new DOMXpath($doc);
-    $list = $xpath->evaluate("//*");
+    $list = $xpath->evaluate("/fakeroot//*");
     $this->currentIndex=$i=0;
     foreach ($list as $node) {
     
       $this->currentNode = &$node;
       $this->currentDocument = &$doc;
+      
+      $this->sendEvent('parseNode');
+      
       $class = @$this->registry[$this->currentNode->nodeName];
       
       if (!$class) continue;
@@ -115,10 +118,15 @@ class RedView_Parser {
       }
     }
       
-    $out = $doc->saveXML();
-    $out = trim(str_replace('<?xml version="1.0"?>', '', $out), "\r\n\t ");
+    $html = ''; 
+    $children = $doc->firstChild->childNodes; 
+    foreach ($children as $child) { 
+      $html .= $doc->saveXML( $child ); 
+    } 
+
+    $out = $html; // $doc->saveXML();
     $out = preg_replace('/\?>(\s*)<\?php/', '; ', $out);
-    
+    // $out = "<?php @extract(@\$this->_vars); ?".'>'\n$out";
     return $out;
     
   }
