@@ -1,6 +1,4 @@
-
-
-                         RedView
+RedView
 ==========================================================
 
 RedView is a view management framework for PHP.
@@ -12,7 +10,7 @@ RedView is a view management framework for PHP.
 >   If you want a stable version, fork [RedView on GitHub] :)
 
 ----------------------------------------------------------
-                        Highlights
+Highlights
 ----------------------------------------------------------
 
 -   Provides an intuitive and unintrusive foundation for your web application's
@@ -29,7 +27,7 @@ RedView is a view management framework for PHP.
 -   Integrates seamlessly with (but doesn't require) [RedBean] and [RedModel].
 
 ----------------------------------------------------------
-                       Design Notes
+Design Notes
 ----------------------------------------------------------
 
 RedView tries to achieve the same elegant design and straightforward
@@ -44,10 +42,10 @@ framework will occur within the context of a [view's][view] controller.
 
 To make your life easier, the RedView facade extends the base controller. 
 This means your controllers can simply extend RedView and most of the
-framework will be accessible through *self*.
+framework will be accessible through *self*. *
 
 ----------------------------------------------------------
-                       Definitions
+Definitions
 ----------------------------------------------------------
 
 
@@ -87,7 +85,7 @@ discussing RedView.
 -   ### Controller
 
     A PHP class providing functionality for a [view]. Your view controllers
-    should extend the *RedView* class. 
+    should extend the *RedView* class. *
     
 
 <p id="Custom_Tag"></p>
@@ -105,17 +103,17 @@ discussing RedView.
     For example, by default RedView will append a processing instruction to a
     form's children via a custom "form" tag.
 
->   **Hint**
->
->   Custom tags should not modify the markup in a way that 
->   reflects the state of the current session or request.
->
->   Although this may work during testing, things will break 
->   once caching is enabled. 
->
->   Instead, create a processing instruction or two, possibly 
->   calling a static method of your custom tag. If you need 
->   to access the tag's contents at runtime, use output buffering.
+    >   **Hint**
+    >
+    >   Custom tags should not modify the markup in a way that 
+    >   reflects the state of the current session or request.
+    >
+    >   Although this may work during testing, things will break 
+    >   once caching is enabled. 
+    >
+    >   Instead, create a processing instruction or two, possibly 
+    >   calling a static method of your custom tag. If you need 
+    >   to access the tag's contents at runtime, use output buffering.
 
 <p id="Markup"></p>
 
@@ -131,10 +129,10 @@ discussing RedView.
     In other words, *$this* will refer to an instance of the controller for
     this [view], and *self* will refer to the controller class itself.
  
->   **Hint**
->
->   Sending HTML to the browser after receiving an HTTP post instead of
->   redirecting causes usability issues with the browser's navigation controls.
+    >   **Hint**
+    >
+    >   Sending HTML to the browser after receiving an HTTP post instead of
+    >   redirecting causes usability issues with the browser's navigation controls.
 
 <p id="Processing_Instruction"></p>
 
@@ -147,17 +145,17 @@ discussing RedView.
           echo $user->name;
         ?>
 
->   **Hint**
->
->   Processing instructions should not appear in HTML tag attributes in your
->   [markup].
->
->   The markup is parsed as XML before it is parsed as PHP, so the outcome is
->   at the mercy of PHP's XML writer (which will dutifully recode your intended
->   PHP code as XML entities). 
->
->   Create a [custom tag] or store the string content of the opening tag in a
->   [slot] instead of putting processing instructions inside of tag attributes.
+    >   **Hint**
+    >
+    >   Processing instructions should not appear in HTML tag attributes in your
+    >   [markup].
+    >
+    >   The markup is parsed as XML before it is parsed as PHP, so the outcome is
+    >   at the mercy of PHP's XML writer (which will dutifully recode your intended
+    >   PHP code as XML entities). 
+    >
+    >   Create a [custom tag] or store the string content of the opening tag in a
+    >   [slot] instead of putting processing instructions inside of tag attributes.
 
 
 <p id="View"></p>
@@ -194,7 +192,7 @@ discussing RedView.
         This state occurs if no action was requested.
 
 ----------------------------------------------------------
-                       See Also
+See Also
 ----------------------------------------------------------
 
 
@@ -206,7 +204,7 @@ discussing RedView.
 
 ----------------------------------------------------------
 
->   *More documentation to come...*
+\* forthcoming...
 
 
 
