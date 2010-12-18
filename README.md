@@ -1,6 +1,4 @@
-
-
-                         RedView
+RedView
 ==========================================================
 
 RedView is a view management framework for PHP.
@@ -12,7 +10,7 @@ RedView is a view management framework for PHP.
 >   If you want a stable version, fork [RedView on GitHub] :)
 
 ----------------------------------------------------------
-                        Highlights
+Highlights
 ----------------------------------------------------------
 
 -   Provides an intuitive and unintrusive foundation for your web application's
@@ -29,7 +27,7 @@ RedView is a view management framework for PHP.
 -   Integrates seamlessly with (but doesn't require) [RedBean] and [RedModel].
 
 ----------------------------------------------------------
-                       Design Notes
+Design Notes
 ----------------------------------------------------------
 
 RedView tries to achieve the same elegant design and straightforward
@@ -47,7 +45,7 @@ This means your controllers can simply extend RedView and most of the
 framework will be accessible through *self*.
 
 ----------------------------------------------------------
-                       Definitions
+Definitions
 ----------------------------------------------------------
 
 
@@ -194,7 +192,7 @@ discussing RedView.
         This state occurs if no action was requested.
 
 ----------------------------------------------------------
-                       See Also
+See Also
 ----------------------------------------------------------
 
 
@@ -229,4 +227,3 @@ discussing RedView.
 [Custom Tags]:#Custom_Tag
 [Caching]:#Caching
 [Processing Instructions]:#Processing_Instruction
-
