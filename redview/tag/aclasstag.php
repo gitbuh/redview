@@ -63,13 +63,9 @@ abstract class RedView_Tag_AClassTag extends RedView_ATag {
   public function prefixNode ($parser) { 
     $doc    = $parser->currentDocument;
     $class  = get_class($this);
-    $atts   = "";
-    foreach ($this->attribs as $k=>$v) {
-      $q = ($v{0}=='{' && $v{strlen($v)-1}=='}') ? '"' : "'"; 
-      $atts .= ($atts ? ', ' : '') . "'$k'=>{$q}$v{$q}";
-    }
+    $atts   = var_export($this->attribs, true);
     $tag = get_class($this);
-    return $doc->createProcessingInstruction("php", "\${-1}=new $class('{$parser->currentNode->nodeName}', array($atts), \$this); $class::\$tags[]=\${-1}; \${-1}->open()");
+    return $doc->createProcessingInstruction("php", "\${-1}=new $class('{$parser->currentNode->nodeName}', $atts, \$this); $class::\$tags[]=\${-1}; \${-1}->open()");
   }
   
   /**

@@ -67,6 +67,11 @@ class RedView {
     return $_SESSION['_rv']['slots'][$k] = $v;
   }
   
+  public static function get ($k) {
+    return RedView_Tag_Slot::$slots[$k];
+  }
+  
+  
   /** 
       redirect
       
