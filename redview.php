@@ -68,6 +68,8 @@ class RedView {
   }
   
   public static function get ($k) {
+    if (@$_SESSION['_rv']['slots'][$k]) 
+      return $_SESSION['_rv']['slots'][$k];
     return RedView_Tag_Slot::$slots[$k];
   }
   
@@ -101,9 +103,11 @@ class RedView {
   public static function parse ($file) {
     if (!self::$toolbox) self::setup(); 
     if (is_array(@$_SESSION['_rv']['slots'])) {
-      foreach ($_SESSION['_rv']['slots'] as $k=>$v) self::set($k,$v);
+      foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView_Tag_Slot::$slots[$k] = $v;
     }
+    
     self::$toolbox->parser->parse($file);
+    
     unset($_SESSION['_rv']['slots']);
   }
   
