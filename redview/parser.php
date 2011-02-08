@@ -25,7 +25,12 @@ class RedView_Parser extends RedView_ABase {
   }
   
   public function parse ($file) {
+    if (is_array(@$_SESSION['_rv']['slots'])) {
+      foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView_Tag_Slot::$slots[$k] = $v;
+    }
     require $this->findLoader($file);
+  
+    unset($_SESSION['_rv']['slots']);
   }
   
   public function findLoader ($file) {

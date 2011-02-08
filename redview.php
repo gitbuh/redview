@@ -102,13 +102,7 @@ class RedView {
   
   public static function parse ($file) {
     if (!self::$toolbox) self::setup(); 
-    if (is_array(@$_SESSION['_rv']['slots'])) {
-      foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView_Tag_Slot::$slots[$k] = $v;
-    }
-    
     self::$toolbox->parser->parse($file);
-    
-    unset($_SESSION['_rv']['slots']);
   }
   
   public static function toXml ($string) { 

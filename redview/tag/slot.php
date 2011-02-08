@@ -11,18 +11,18 @@ class RedView_Tag_Slot extends RedView_Tag_AClassTag {
 
   public function open () {
     if (@$this->attribs['get']) {
-      print @self::$slots[$this->attribs['get']];
+      print @RedView_Tag_Slot::$slots[$this->attribs['get']];
       return;
     }
     if (@$this->attribs['set']) {
       ob_start();
-      self::$names[]=$this->attribs['set'];
+      RedView_Tag_Slot::$names[]=$this->attribs['set'];
     }
   }
   
   public function close () {
     if (@$this->attribs['set']) {
-      self::$slots[array_pop(self::$names)]=ob_get_clean();
+      RedView_Tag_Slot::$slots[array_pop(RedView_Tag_Slot::$names)]=ob_get_clean();
     }
   }
   
