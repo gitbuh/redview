@@ -1,0 +1,33 @@
+<!-- 
+	Document type definition for markup containing RedView's custom tags.
+	(this document might be incomplete)
+-->
+
+<!-- 
+	A view represents a whole or partial web page.
+-->
+<!ELEMENT r:view ANY>
+
+<!ATTLIST r:view
+	template CDATA #IMPLIED
+	>
+
+<!-- 
+	A slot is used to store or retrieve data for the view.
+-->
+<!ELEMENT r:slot ANY>
+
+<!ATTLIST r:slot
+	set CDATA #IMPLIED
+	get CDATA #IMPLIED
+	>
+	
+<!-- 
+	Loads content from another view.
+-->
+<!ELEMENT r:load EMPTY>
+
+<!ATTLIST r:load
+	file CDATA #IMPLIED
+	>
+	
