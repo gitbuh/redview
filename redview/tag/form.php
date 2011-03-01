@@ -18,8 +18,13 @@ class RedView_Tag_Form extends RedView_ATag {
     $node   = $parser->currentNode;
     
     $callback = $this->attribs['action'];
+    
     $a = $doc->createAttribute('method');
     $a->value = 'POST';
+    $node->appendChild($a);
+    
+    $a = $doc->createAttribute('enctype');
+    $a->value = 'multipart/form-data';
     $node->appendChild($a);
     
     $a = $doc->createAttribute('action');

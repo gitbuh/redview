@@ -56,5 +56,21 @@ abstract class RedView_ATag extends RedView_ABase {
   public function suffixNode ($parser) {
   }
   
+  public function innerXml ($parser) {
+    $dom = $parser->currentDocument;
+    $node = $parser->currentNode;
+    
+    $xpath = new DOMXpath($dom);
+
+    $list = $xpath->evaluate("node()", $node);
+
+    $xml='';
+    foreach ($list as $child) {
+      $xml.=html_entity_decode($dom->saveXML($child));
+    }
+    
+    return  $xml;
+  }
+  
 }
 

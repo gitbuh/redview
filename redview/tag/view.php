@@ -5,7 +5,7 @@ class RedView_Tag_View extends RedView_Tag_AClassTag {
   public $view;
 
   public static function register ($parser) {
-    $parser->register('view', __CLASS__);
+    $parser->register('r:view', __CLASS__);
   }
   public function open () {
   

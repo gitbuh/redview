@@ -19,7 +19,8 @@ class RedView_Action {
       handle an action
    */
   public function handle () {
-    if (!($data = @$_REQUEST['_rv:data'])) return;
+    if (!isset($_REQUEST['_rv:data'])) return;
+    $data = @$_REQUEST['_rv:data'];
     $sid = session_id();
     $code = substr($data, 0, 2);
     $data = substr($data, 2, strlen($data)-2);

@@ -3,7 +3,7 @@
 class RedView_Tag_Load extends RedView_ATag {
   
   public static function register ($parser) {
-    $parser->register('load', __CLASS__);
+    $parser->register('r:load', __CLASS__);
   }
   
   public function markup ($parser) {
