@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * XML helper class.
+ */
 class RedView_Xml {
 
-  /** 
-      convert to SimpleXML node collection 
-  */
+  /**
+   * Convert text to a SimpleXML node collection.
+   * 
+   * @param string $string
+   * 		String containing XML markup.
+   * 
+   * @return SimpleXMLElement
+   * 		SimpleXML node collection.
+   */
   public static function toXml ($string) { 
     $doc = new DOMDocument();
     $root=$doc->createElement('fakeroot');
@@ -16,19 +25,21 @@ class RedView_Xml {
     return $xml->children();
   }
   
-  /** 
-      convert from SimpleXML to text 
-  */
+  /**
+   * Convert from SimpleXML to text.
+   * 
+   * @param SimpleXMLElement $xml
+   * 		SimpleXML node collection
+   * 
+   * @return string
+   * 		String containing XML markup.
+   */
   public static function fromXml ($xml) {
-  
     $content='';
-    
     foreach ($xml as $i=>$e) {
       $content.=$e->asXML();
     }
-    
     return $content;
-    
   }
   
   

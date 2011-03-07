@@ -31,7 +31,7 @@ class RedView_Tag_Form extends RedView_ATag {
     $a->value = '.';
     $node->appendChild($a);
     
-    $val = "RedView_Action::encodeRequest(\$this, '$callback')";
+    $val = "RedView_Action::serializeCallbackObject(\$this, '$callback')";
     $pi = $doc->createProcessingInstruction('php', 
       "echo \"<input type='hidden' name='_rv:data' value='\".$val.\"' />\"");
 

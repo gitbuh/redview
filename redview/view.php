@@ -1,67 +1,90 @@
 <?php
 /**
- RedView View.
-
- Provides end-to-end form submission handling.
+ *
+ * RedView View.
+ *
+ * Contollers for individual views should inherit from this class,
+ * and be placed alongside the corresponding markup files,
+ * having the same name except for the extension (.php instead of .html).
+ *
  */
 class RedView_View {
 
-	public $attribs;
-	public $template;
+  /**
+   * Template to render after rendering this view.
+   * 
+   * @var string
+   */
+  public $template;
 
-	protected $_vars;
+  /**
+   * Array of variables to pass to the markup file.
+   * These variables become local variables in the markup file.
+   * 
+   * @var array
+   */
+  protected $_vars;
 
-	public function beforeRender () {
-	}
+  public function __construct() {
+  }
 
-	public function render () {
-	}
+  public function unserialize () {
+  }
+  
+  public function beforeRender () {
+  }
 
-	public function afterRender () {
-	}
+  public function afterRender () {
+  }
 
-	public function loadTemplate () {
-		$cache=null;
-		$template=@$this->attribs['template'];
-		if (!$template) $template=$this->template;
-		if ($template) $cache = RedView::parse($template);
-		if ($cache) require_once $cache;
-	}
+  /**
+   * 
+   */
+  public function loadTemplate ($template=null) {
+    $cache=null;
+    if (!$template) $template=$this->template;
+    if ($template) $cache = RedView::parse($template);
+    if ($cache) require $cache;
+  }
 
-	public function loadMarkup ($file) {
-		if ($this->_vars) {
-			extract($this->_vars);
-		}
-		include $file;
-	}
+  public function loadCache ($file, $params) {
+    if ($this->_vars) {
+      extract($this->_vars);
+    }
+    if ($params) {
+      extract($params);
+    }
+    include $file;
+  }
 
-	public function set ($k, $v) {
-		$this->_vars[$k]=$v;
-	}
-	public function get ($k) {
-		return $this->_vars[$k];
-	}
+  public function set ($k, $v) {
+    $this->_vars[$k]=$v;
+  }
+  public function get ($k) {
+    return $this->_vars[$k];
+  }
 
 
 
-	/**
-	 __sleep
-	 Magic method, called on serialize. Properties named with a leading underscore will not be serialized.
-	 @return array of names of properties to serialize.
-	 */
-	public function __sleep () {
-		$propNames;
-		foreach (array_keys(get_object_vars($this)) as $k) if ($k{0}!='_') $propNames[]=$k;
-		return $propNames;
-	}
+  /**
+   __sleep
+   Magic method, called on serialize. Properties named with a leading underscore will not be serialized.
+   @return array of names of properties to serialize.
+   */
+  public function __sleep () {
+    $propNames;
+    foreach (array_keys(get_object_vars($this)) as $k) if ($k{0}!='_') $propNames[]=$k;
+    return $propNames;
+  }
 
-	/**
-	 __wakeup
-	 Magic method, called on unserialize.
-	 */
-	public function __wakeup () {
-		$this->__construct();
-	}
+  /**
+   __wakeup
+   Magic method, called on unserialize.
+   */
+  public function __wakeup () {
+    $this->__construct();
+    $this->unserialize();
+  }
 
 }
 

@@ -1,5 +1,5 @@
 <?php
-
+/*
 class RedView_Tag_View extends RedView_Tag_AClassTag {
 
   public $view;
@@ -28,6 +28,35 @@ class RedView_Tag_View extends RedView_Tag_AClassTag {
   }
   
   
+}
+*/
+
+class RedView_Tag_View extends RedView_ATag {
+
+  public static function register ($parser) {
+    $parser->register('r:view', __CLASS__);
+  }
+
+  public function markup (RedView_Parser $parser) {
+
+    $doc = $parser->currentDocument;
+    $node = $parser->currentNode;
+    
+    $pi = $doc->createProcessingInstruction('php',
+        		"\$this->template=\"{$this->attribs['template']}\"");
+    
+    $pi2 = $doc->createProcessingInstruction('php',
+        		"\$this->afterRender(); \$this->loadTemplate();");
+  
+    $node->parentNode->insertBefore($pi, $node);
+
+    while ($node->childNodes->length) {
+      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
+    }
+    
+    $node->parentNode->replaceChild($pi2, $node);
+    
+  }
 }
 
 

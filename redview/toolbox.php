@@ -1,16 +1,34 @@
 <?php
 
 /**
-    RedView Toolbox. Used by other classes to access important things.
-*/
+ * RedView Toolbox. Used by other classes to access important things.
+ */
 class RedView_Toolbox {
 
+  /**
+   * @var string
+   */
   public $events = 'RedView_Event';
   
+  /**
+   * @var RedView_Parser
+   */
   public $parser;
+  /**
+   * @var RedView_Router
+   */
   public $router;
+  /**
+   * @var RedView_Crypto
+   */
   public $crypto;
+  /**
+   * @var RedView_Action
+   */
   public $action;
+  /**
+   * @var RedView_Settings
+   */
   public $misc;
 
   public function __construct () {

@@ -1,31 +1,48 @@
 <?php
 /**
-    RedView Action. Provides end-to-end form submission handling.
-*/
+ *   RedView Action. Provides form submission handling.
+ */
 class RedView_Action {
+  /**
+   * Time to live, in seconds.
+   * 
+   * After the time expires, the form post won't be accepted.
+   * 
+   * @var int
+   */
+  public $ttl=300;
 
-  public $ttl=300;  // five minutes
-
-  public static function encodeRequest($obj, $method) {
+  /**
+   * Serialize and encrypt an object, one of its methods, and some additional data.
+   * 
+   * We resurrect the object and call the method when a form post is
+   * made from the corresponding view.
+   * 
+   * @param Object $obj
+   * @param string $method
+   * 		name of method
+   */
+  public static function serializeCallbackObject($obj, $method) {
     $c = get_called_class();
     $o = new $c();
-    $code=$o->createChars();
+    $code=substr(base_convert(mt_rand(33, 1024), 10, 32), 0, 2);
     return $code . RedView::encrypt(serialize(
       array($obj, $method, session_id(), time() + $o->ttl)
-    ), $o->createInitVector($code));
+    ),  $code . substr(session_id(), 0, 6));
   } 
   
   /** 
-      handle an action
+   * Handle a form post if serialized callback object is present in the post data.
    */
   public function handle () {
+    // if no action was present, return.
     if (!isset($_REQUEST['_rv:data'])) return;
-    $data = @$_REQUEST['_rv:data'];
+    $data = $_REQUEST['_rv:data'];
     $sid = session_id();
     $code = substr($data, 0, 2);
     $data = substr($data, 2, strlen($data)-2);
     
-    $decrypted=RedView::decrypt($data, $this->createInitVector($code));
+    $decrypted=RedView::decrypt($data,  $code . substr(session_id(), 0, 6));
     $a = unserialize($decrypted) or die ("Your session has expired!");
     
     list ($view, $method, $session, $expire) = $a;
@@ -47,7 +64,6 @@ class RedView_Action {
     
     $class = get_class($view);
     
-    
     @$_SESSION['_rv']['fields']         || $_SESSION['_rv']['fields'] = array();
     @$_SESSION['_rv']['fields'][$class] || $_SESSION['_rv']['fields'][$class] = array();
     $_SESSION['_rv']['fields'][$class] = array_merge($_SESSION['_rv']['fields'][$class], $_REQUEST);
@@ -57,8 +73,15 @@ class RedView_Action {
     $this->end();
   }
   
-  /** 
-      redirect and optionally set a slot
+  /**
+   * Redirect to where the form was posted from 
+   * and optionally set a slot to a value.
+   * 
+   * @param string $slot
+   * 		Slot key to set
+   * 
+   * @param mixed $value
+   * 		Value to set
    */
   public function end ($slot=null, $value='') {
     if ($slot) RedView::set($slot, $value);
@@ -66,19 +89,6 @@ class RedView_Action {
     $path = trim(implode('/', $args), '/');
     RedView::redirect("/$path/");
   }
-  
-  
-  /** 
-   */
-  public function createInitVector ($code) {;
-    return $code . substr(session_id(), 0, 6);
-  }
-  /** 
-   */
-  public function createChars () {
-    return substr(base_convert(mt_rand(33, 1024), 10, 32), 0, 2);
-  }
-  
   
 }
 

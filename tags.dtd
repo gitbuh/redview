@@ -31,3 +31,25 @@
 	file CDATA #IMPLIED
 	>
 	
+<!-- 
+	Format content as a PHP string.
+-->
+<!ELEMENT r:format ANY>
+
+<!ATTLIST r:load
+	value CDATA #IMPLIED
+	>
+	
+<!-- 
+	Flow control - if statement
+-->
+<!ELEMENT r:if ANY>
+
+<!ATTLIST r:if
+	value CDATA #IMPLIED
+	>
+	
+<!-- 
+	Flow control - else statement
+-->
+<!ELEMENT r:else ANY>

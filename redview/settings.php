@@ -1,8 +1,8 @@
 <?php
 
 /**
-    Class to hold misc. app settings.
-*/
+ * Class to hold misc. app settings.
+ */
 class RedView_Settings extends ArrayObject {
   
 }
