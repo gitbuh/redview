@@ -10,7 +10,7 @@ class RedView_Tag_Load extends RedView_ATag {
     if ($this->attribs['view']) {
       $dom  = $parser->currentDocument;
       $node = $parser->currentNode;
-      $file = $parser->findLoader(trim($this->attribs['view'], '/').'.html');
+      $file = $parser->tools->cache->findLoader(trim($this->attribs['view'], '/').'.html');
       $params = array();
       if ($node->childNodes) {
         foreach ($node->childNodes as $child) {
