@@ -43,7 +43,7 @@ class RedView_View {
   public function loadTemplate ($template=null) {
     $cache=null;
     if (!$template) $template=$this->template;
-    if ($template) $cache = RedView::parse($template);
+    if ($template) $cache = RedView::load($template);
     if ($cache) require $cache;
   }
 
