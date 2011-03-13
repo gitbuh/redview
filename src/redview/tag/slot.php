@@ -14,17 +14,18 @@ class RedView_Tag_Slot extends RedView_ATag {
 
     $doc = $parser->currentDocument;
     $node = $parser->currentNode;
-
-    $get = $this->attribs['get'];
-    $set = $this->attribs['set'];
-
+    $get = "";
+    $set = "";
     $pi = null;
     $pi2 = null;
     
+    if (isset($this->attribs['get'])) $get = $this->attribs['get'];
+    if (isset($this->attribs['set'])) $set = $this->attribs['set'];
+    
     if ($get) {
+      $slot = "RedView_Tag_Slot::\$slots[\"$get\"]";
       $pi = $doc->createProcessingInstruction('php',
-        		"echo RedView_Tag_Slot::\$slots[\"$get\"]");
-
+        		"if (isset($slot)) echo $slot");
     }
     elseif ($set) {
       $pi = $doc->createProcessingInstruction('php',
@@ -32,7 +33,6 @@ class RedView_Tag_Slot extends RedView_ATag {
 
       $pi2 = $doc->createProcessingInstruction('php',
           		"RedView_Tag_Slot::\$slots[array_pop(RedView_Tag_Slot::\$names)]=ob_get_clean();");
-
     }
 
     $node->parentNode->insertBefore($pi, $node);

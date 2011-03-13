@@ -17,6 +17,8 @@ class RedView_Tag_Form extends RedView_ATag {
     $doc    = $parser->currentDocument;
     $node   = $parser->currentNode;
     
+    if (!isset($this->attribs['action'])) return;
+    
     $callback = $this->attribs['action'];
     
     $a = $doc->createAttribute('method');

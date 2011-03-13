@@ -77,19 +77,19 @@ class RedView_Parser extends RedView_ABase {
   public $currentNode=null;
   
   /**
+   * Document currently being parsed
+   * 
+   * @var DOMDocument
+   */
+  public $currentDocument=null;
+  
+  /**
    * @return DOMNode
    */
   function getCurrentNode () {
     
     return $this->currentNode();
   }
-  
-  /**
-   * Document currently being parsed
-   * 
-   * @var DOMDocument
-   */
-  public $currentDocument=null;
 
   /**
    * Register a class as a handler for tags.
@@ -118,11 +118,13 @@ class RedView_Parser extends RedView_ABase {
    * 		path to the  to parse.
    */
   public function parse ($file) {
-    if (isset($_SESSION['_rv']) && is_array($_SESSION['_rv']['slots'])) {
+    if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots']) && is_array($_SESSION['_rv']['slots'])) {
       foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView_Tag_Slot::$slots[$k] = $v;
     }
     require $this->findLoader($file);
-    unset($_SESSION['_rv']['slots']);
+    if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots'])) {
+      unset($_SESSION['_rv']['slots']);
+    }
   }
 
   /**
@@ -153,10 +155,10 @@ class RedView_Parser extends RedView_ABase {
    * @param string $file
    */
   protected function writeLoader ($cache, $file) {
-    $classFile = substr($file, 0, strlen($file)-5).'.php';
+    $classFile = dirname($file) . '/' . implode('', explode('_', basename($file, '.html') . '.php'));
     $class = $this->getClassFromFile($classFile);
     if (!$class) $class = $this->defaultView;
-    file_put_contents("$cache.loader.php", "<?php ".
+    file_put_contents("$cache.loader.php", "<?php /* $classFile */ ".
         (file_exists($classFile) ? "
         require_once '$classFile';" : "")." 
       	if (!isset(\$_params)) \$_params = null;

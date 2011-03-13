@@ -42,7 +42,7 @@ abstract class RedView_ATag extends RedView_ABase {
    * @param RedView_Parser $parser
    * @return string name of tag to rewrite.
    */
-  public static function register ($parser) { 
+  public static function register (RedView_Parser $parser) { 
     return '';
   }
   
