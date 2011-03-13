@@ -11,20 +11,20 @@ class RedView {
 /**
       @type RedView_Toolbox
   */
-  public static $toolbox=null;
+  public static $tools=null;
 
   /** 
       init
       
       start the RedView page lifecycle.
       
-      @param RedView_Toolbox $toolbox optional custom toolbox
+      @param RedView_Toolbox $tools optional custom tools
       @return RedView_Toolbox
   */
-  public static function init (RedView_Toolbox $toolbox=null) {
+  public static function init (RedView_Toolbox $tools=null) {
     session_start();
-    self::$toolbox = $toolbox ? $toolbox : new RedView_Toolbox();
-    return self::$toolbox;
+    self::$tools = $tools ? $tools : new RedView_Toolbox();
+    return self::$tools;
   }
 
   /** 
@@ -35,8 +35,8 @@ class RedView {
       @return mixed
   */
   public static function setup() {
-    if (!self::$toolbox) self::init();
-    self::$toolbox->router->loadPage();
+    if (!self::$tools) self::init();
+    self::$tools->router->loadPage();
   }
   
   /** 
@@ -65,12 +65,12 @@ class RedView {
       
       @return mixed
   */
-  public static function set ($k, $v) {
+  public static function setSlot ($k, $v) {
     RedView_Tag_Slot::$slots[$k] = $v;
     return $_SESSION['_rv']['slots'][$k] = $v;
   }
   
-  public static function get ($k) {
+  public static function getSlot ($k) {
     if (@$_SESSION['_rv']['slots'][$k]) 
       return $_SESSION['_rv']['slots'][$k];
     return RedView_Tag_Slot::$slots[$k];
@@ -86,8 +86,8 @@ class RedView {
       @return mixed
   */
   public static function redirect ($url) {
-    if (!self::$toolbox) self::setup(); 
-    return self::$toolbox->router->redirect($url);
+    if (!self::$tools) self::setup(); 
+    return self::$tools->router->redirect($url);
   }
   
   /** 
@@ -100,12 +100,12 @@ class RedView {
       @return mixed
   */
   public static function end ($k, $v) {
-    return self::$toolbox->action->end($k, $v);
+    return self::$tools->action->end($k, $v);
   }
   
-  public static function parse ($file) {
-    if (!self::$toolbox) self::setup(); 
-    self::$toolbox->parser->parse($file);
+  public static function load ($file) {
+    if (!self::$tools) self::setup(); 
+    self::$tools->cache->load($file);
   }
   
   public static function toXml ($string) { 
@@ -117,11 +117,11 @@ class RedView {
   }
   
   public static function encrypt ($text, $iv=null) {
-    return self::$toolbox->crypto->encrypt($text, $iv);
+    return self::$tools->crypto->encrypt($text, $iv);
   }
   
   public static function decrypt ($text, $iv=null) {
-    return self::$toolbox->crypto->decrypt($text, $iv);
+    return self::$tools->crypto->decrypt($text, $iv);
   }
   
   

@@ -84,7 +84,7 @@ class RedView_Action {
    * 		Value to set
    */
   public function end ($slot=null, $value='') {
-    if ($slot) RedView::set($slot, $value);
+    if ($slot) RedView::setSlot($slot, $value);
     $args = RedView::args();
     $path = trim(implode('/', $args), '/');
     RedView::redirect("/$path/");

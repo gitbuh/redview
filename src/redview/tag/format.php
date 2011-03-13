@@ -11,16 +11,17 @@ class RedView_Tag_Format extends RedView_ATag {
     $dom = $parser->currentDocument;
     $node = $parser->currentNode;
 
-    $xml=$this->innerXml($parser);
-    $val=$this->attribs['value'];
 
-    if ($xml) {
+    if (isset($this->attribs['value'])) {
       $pi = $dom->createProcessingInstruction('php', 
-      		"echo <<<RV_HEREDOC\n$xml\nRV_HEREDOC;\n");
+      		"echo \"{$this->attribs['value']}\"");
     }
-    elseif ($val) {
-      $pi = $dom->createProcessingInstruction('php', 
-      		"echo \"$val\"");
+    else {
+      $xml=$this->innerXml($parser);
+      if ($xml) {
+        $pi = $dom->createProcessingInstruction('php', 
+        		"echo <<<RV_HEREDOC\n$xml\nRV_HEREDOC;\n");
+      }
     }
     
     $node->parentNode->replaceChild($pi, $node);

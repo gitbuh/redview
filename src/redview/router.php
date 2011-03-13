@@ -2,7 +2,6 @@
 
 class RedView_Router extends RedView_ABase {
 
-  public $viewDir='view';
   public $pageDir='page';
   public $defaultPage='home';
 
@@ -14,7 +13,7 @@ class RedView_Router extends RedView_ABase {
   public function loadPage() {
     $defaultPage=$this->defaultPage.'/';
     $pageDir=$this->pageDir;
-    $viewDir=$this->viewDir;
+    $viewDir=$this->tools->parser->viewDir;
 
     if (!isset($_REQUEST['_rv:page'])) $_REQUEST['_rv:page']="";
 
@@ -58,10 +57,11 @@ class RedView_Router extends RedView_ABase {
     // handle any post actions if appropriate
     $this->tools->action->handle();
 
+    // Load the cached view/controller
     ob_start();
-    // parse the file with RedView
-    echo $this->tools->parser->parse($path);
+    echo $this->tools->cache->load($path);
     $out=ob_get_clean();
+    
     $doc = new DOMDocument();
 
     // if ($out==''){print_r(get_defined_vars());}
