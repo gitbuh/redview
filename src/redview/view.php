@@ -23,7 +23,7 @@ class RedView_View {
    * 
    * @var array
    */
-  protected $_vars;
+  protected $_vars = array();
 
   public function __construct() {
   }
@@ -47,10 +47,8 @@ class RedView_View {
     if ($cache) require $cache;
   }
 
-  public function loadCache ($file, $params) {
-    if ($this->_vars) {
-      extract($this->_vars);
-    }
+  public function loadCache ($file) {
+    extract($this->_vars);
     if ($params) {
       extract($params);
     }

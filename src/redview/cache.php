@@ -76,10 +76,11 @@ class RedView_Cache extends RedView_ABase {
     file_put_contents("$cache.loader.php", "<?php /* $classFile */ ".
         (file_exists($classFile) ? "
         require_once '$classFile';" : "")." 
-      	if (!isset(\$_params)) \$_params = null;
         \$view = new $class(); 
+      	if (!isset(\$_params)) \$_params = array();
+        foreach (\$_params as \$_k=>\$_v) \$view->set(\$_k, \$_v); 
         \$view->beforeRender(); 
-        \$view->loadCache('$cache.php', \$_params);");
+        \$view->loadCache('$cache.php');");
   }
 
   /**
