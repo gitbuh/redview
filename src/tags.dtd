@@ -1,10 +1,16 @@
 <!-- 
-	Document type definition for markup containing RedView's custom tags.
-	(this document might be incomplete)
--->
-
-<!-- 
-	A view represents a whole or partial web page.
+	<p>
+			A view represents a whole or partial web page.
+	</p>
+	<p></p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+			&lt;r:view xmlns:r="RedView" template="template/master.html"&gt;
+				...
+			&lt;/r:view&gt;
+	</li>
 -->
 <!ELEMENT r:view ANY>
 
@@ -13,7 +19,19 @@
 	>
 
 <!-- 
-	A slot is used to store or retrieve data for the view.
+	<p>
+			A slot is used to store or retrieve data for the view.
+	</p>
+	<p></p>
+	<p><b>
+			examples:
+	</b></p>
+	<li>
+			&lt;r:slot get="content"/&gt;
+	</li>
+	<li>
+			&lt;r:slot set="content"&gt; blah blah &lt;/r:slot&gt;
+	</li>
 -->
 <!ELEMENT r:slot ANY>
 
@@ -23,33 +41,151 @@
 	>
 	
 <!-- 
-	Loads content from another view.
+	<p>
+			A parameter for r:load.
+	</p>
+	<p></p>
+	<p>
+			Parameters are available during beforeLoad via $this->get()
+			and in the view as local variables.
+	</p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+			&lt;r:param name="foo" value="$someVar" /&gt;
+	</li>
 -->
-<!ELEMENT r:load EMPTY>
+<!ELEMENT r:param EMPTY>
 
-<!ATTLIST r:load
-	file CDATA #IMPLIED
+<!ATTLIST r:param
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
 	>
 	
 <!-- 
-	Format content as a PHP string.
+	<p>
+			Loads content from another view.
+	</p>
+	<p></p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+			&lt;r:load file="widget/login" /&gt;
+	</li>
+-->
+<!ELEMENT r:load ( r:param )* >
+
+
+<!ATTLIST r:load
+	file CDATA #REQUIRED
+	>
+	
+<!-- 
+	<p>
+			Format content as a PHP string.
+	</p>
+	<p></p>
+	<p>
+			Formatted markup should be treated as a string literal 
+			with variable injection. No custom tags may be used 
+			within r:format.
+	</p>
+	<p></p>
+	<p><b>
+			examples:
+	</b></p>
+	<li>
+			&lt;r:format&gt; 
+				Hello, $username!
+				You have $messagecount new messages.
+			&lt;/r:format&gt;
+	</li>
+	<li>
+			Hello, &lt;r:format value="$username"/&gt;!
+	</li>
 -->
 <!ELEMENT r:format ANY>
 
-<!ATTLIST r:load
+<!ATTLIST r:format
 	value CDATA #IMPLIED
 	>
 	
 <!-- 
-	Flow control - if statement
+	<p>
+			Flow control - if statement
+	</p>
+	<p></p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+	
+			&lt;r:if value="$username"&gt; 
+				&lt;r:format&gt; 
+					Hello, $username!
+				&lt;/r:format&gt;
+			&lt;/r:if&gt;
+	</li>
+	
 -->
 <!ELEMENT r:if ANY>
 
 <!ATTLIST r:if
-	value CDATA #IMPLIED
+	value CDATA #REQUIRED
 	>
 	
 <!-- 
-	Flow control - else statement
+	<p>
+			Flow control - else statement
+	</p>
+	<p></p>
+	<p>
+			Else tags must go <i>inside</i> of r:if tags, at the very end.
+	</p>
+	<p></p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+	
+			&lt;r:if value="$username"&gt; 
+				&lt;r:format&gt; 
+					Hello, $username!
+				&lt;/r:format&gt;
+				<p>
+				&lt;r:else&gt; 
+					Not logged in.
+				&lt;/r:else&gt;
+				</p>
+			&lt;/r:if&gt;
+	</li>
+	
 -->
 <!ELEMENT r:else ANY>
+
+
+<!-- 
+	<p>
+			Flow control - each statement
+	</p>
+	<p></p>
+	<p><b>
+			example:
+	</b></p>
+	<li>
+			&lt;r:each in="$fields" key="$k" value="$v"&gt;
+				<p>
+				&lt;r:format&gt; &lt;td title="$k"&gt; $v &lt;/td&gt; &lt;/r:format&gt;
+				</p>
+			&lt;/r:each&gt;
+	</li>
+-->
+<!ELEMENT r:each ANY>
+
+<!ATTLIST r:each
+	in CDATA #REQUIRED
+	key CDATA #IMPLIED
+	value CDATA #REQUIRED
+	>
