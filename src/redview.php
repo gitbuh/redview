@@ -6,13 +6,18 @@ spl_autoload_register(function($class){return spl_autoload(str_replace('_', '/',
 /**
     RedView facade class. Provides single static entrypoint to the RedView framework.
 */
-class RedView {
+class RedView extends RedView_View {
 
-/**
-      @type RedView_Toolbox
+ /**
+  * @var RedView_Toolbox $tools
   */
   public static $tools=null;
 
+  /**
+   * @var array $slots
+   */
+  public static $slots=array();
+  
   /** 
       init
       
@@ -48,11 +53,16 @@ class RedView {
       user browses to:    http: //example.com/admin/edit/ahaha/ohohoh/
        args() returns:    Array ( [0] => admin/edit [1] => ahaha [2] => ohohoh )
       
-      @param int $index optional index of arg to return
-      @return array of page args, or arg at requested index.
+      @param int $index 
+      		optional index of arg to return
+      		
+      @return mixed 
+      		Array of page args, or arg at requested index.
   */
   public static function args ($index=-1) {
-    return $index>-1 ? @$_REQUEST['_rv:argv'][$index] : $_REQUEST['_rv:argv'];
+    if (!self::$tools) self::init();
+    $args = self::$tools->router->args;
+    return $index>-1 ? $args[index] : $args;
   }
   
   /** 
@@ -66,14 +76,14 @@ class RedView {
       @return mixed
   */
   public static function setSlot ($k, $v) {
-    RedView_Tag_Slot::$slots[$k] = $v;
-    return $_SESSION['_rv']['slots'][$k] = $v;
+    self::$slots[$k] = $v;
+    $_SESSION['_rv']['slots'][$k] = $v;
   }
   
   public static function getSlot ($k) {
-    if (@$_SESSION['_rv']['slots'][$k]) 
+    if (isset($_SESSION['_rv']['slots'][$k])) 
       return $_SESSION['_rv']['slots'][$k];
-    return RedView_Tag_Slot::$slots[$k];
+    return self::$slots[$k];
   }
   
   
@@ -100,7 +110,8 @@ class RedView {
       @return mixed
   */
   public static function end ($k, $v) {
-    return self::$tools->action->end($k, $v);
+    if (!self::$tools) self::setup(); 
+    return self::$tools->router->end($k, $v);
   }
   
   public static function load ($file) {
@@ -114,14 +125,6 @@ class RedView {
   
   public static function fromXml ($xml) {
     return RedView_Xml::fromXml($xml);
-  }
-  
-  public static function encrypt ($text, $iv=null) {
-    return self::$tools->crypto->encrypt($text, $iv);
-  }
-  
-  public static function decrypt ($text, $iv=null) {
-    return self::$tools->crypto->decrypt($text, $iv);
   }
   
   

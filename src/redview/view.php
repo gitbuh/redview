@@ -47,11 +47,8 @@ class RedView_View {
     if ($cache) require $cache;
   }
 
-  public function loadCache ($file) {
+  public function includeFile ($file) {
     extract($this->_vars);
-    if ($params) {
-      extract($params);
-    }
     include $file;
   }
 
@@ -61,7 +58,7 @@ class RedView_View {
   public function get ($k) {
     return $this->_vars[$k];
   }
-
+  
 
 
   /**

@@ -3,7 +3,7 @@
 /** 
     override forms 
 */
-class RedView_Tag_Form extends RedView_ATag {
+class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
   
   public static function register ($parser) {
     $parser->register('form', __CLASS__);
@@ -33,7 +33,7 @@ class RedView_Tag_Form extends RedView_ATag {
     $a->value = '.';
     $node->appendChild($a);
     
-    $val = "RedView_Action::serializeCallbackObject(\$this, '$callback')";
+    $val = "RedView_Mod_Form::serializeCallbackObject(\$this, '$callback')";
     $pi = $doc->createProcessingInstruction('php', 
       "echo \"<input type='hidden' name='_rv:data' value='\".$val.\"' />\"");
 

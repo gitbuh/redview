@@ -1,32 +1,47 @@
 <?php
 
-abstract class RedView_ATag extends RedView_ABase {
+/**
+ * 
+ * 
+ * @author owner
+ *
+ */
+abstract class RedView_Mod_Markup_Tag extends RedView_Base {
 
   /**
-      Tag (node) name
-      @var string 
-  */
+   Tag (node) name
+   @var string
+   */
   public $name;
   /**
-      Tag attributes
-      @var array<string=>string> 
-  */
+   Tag attributes
+   @var array<string=>string>
+   */
   public $attribs=array();
 
   /**
-      View object for a class tag.
-      Should be null when writing to cache.
-      @var RedView_View
-  */
-  public $view;
+   * The parser. Only present when the cache is being written.
+   * 
+   * @var Redview_Parser $parser
+   */
+  public $parser = null;
   
   /**
-   * Base tag constructor.
+   * View object. 
    * 
+   * @var RedView_View
+   */
+  public $view;
+
+  /**
+   * Base tag constructor.
+   *
    * @param string $name
    * 		The tag's XML name.
+   * 
    * @param Array $attribs
    * 		The tag's XML attributes, as an array of key=>value string pairs.
+   * 
    * @param RedView_View $view
    * 		The view object that this tag is associated with, if any (runtime only).
    */
@@ -35,34 +50,25 @@ abstract class RedView_ATag extends RedView_ABase {
     $this->attribs=$attribs;
     $this->view=$view;
   }
-  
-  /**
-   * Register a tag with the parser.
-   * 
-   * @param RedView_Parser $parser
-   * @return string name of tag to rewrite.
-   */
-  public static function register (RedView_Parser $parser) { 
-    return '';
-  }
-  
-  
+
+
   /**
    * Manipulate XML when writing to the cache.
-   * 
+   *
    * @param RedView_Parser $parser
    */
   public function markup ($parser) {
-  
+
   }
-  
-  
+
+
   /**
    * Get the inner XML content of the current node.
-   * 
+   *
    * @param RedView_Parser $parser
+   * 
    * @return string
-   * 		Text content of inner XML of this node, 
+   * 		Text content of inner XML of this node,
    * 		with all entities converted to plain text.
    */
   public function innerXml ($parser) {
@@ -78,6 +84,6 @@ abstract class RedView_ATag extends RedView_ABase {
     }
     return  $xml;
   }
-  
-}
 
+
+}

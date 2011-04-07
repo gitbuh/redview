@@ -1,6 +1,6 @@
 <?php
 
-class RedView_Tag_Load extends RedView_ATag {
+class RedView_Mod_Markup_Tag_Load extends RedView_Mod_Markup_Tag {
   
   public static function register ($parser) {
     $parser->register('r:load', __CLASS__);
@@ -20,7 +20,7 @@ class RedView_Tag_Load extends RedView_ATag {
         }
       }
       $_params = var_export($params, true);
-      $pi   = $dom->createProcessingInstruction('php', "\$_params=$_params; require '$file'");
+      $pi   = $dom->createProcessingInstruction('php', "\$params=$_params; require '$file';");
       $node->parentNode->replaceChild($pi, $node);
     }
   }

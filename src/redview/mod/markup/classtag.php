@@ -1,6 +1,6 @@
 <?php
 
-abstract class RedView_Tag_AClassTag extends RedView_ATag {
+abstract class RedView_Mod_Markup_ClassTag extends RedView_Mod_Markup_Tag {
 
 
   

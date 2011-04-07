@@ -1,6 +1,6 @@
 <?php
 
-class RedView_Router extends RedView_ABase {
+class RedView_Router extends RedView_Base {
 
   public $pageDir='page';
   public $defaultPage='home';
@@ -11,6 +11,9 @@ class RedView_Router extends RedView_ABase {
    base URL of current site
    */
   public function loadPage() {
+
+    $this->sendEvent('beforePageLoad');
+
     $defaultPage=$this->defaultPage.'/';
     $pageDir=$this->pageDir;
     $viewDir=$this->tools->parser->viewDir;
@@ -54,14 +57,15 @@ class RedView_Router extends RedView_ABase {
     $args[0] ? array_unshift($args, $page) : $args[0]=$page;
     $_REQUEST['_rv:argv'] = $args;
 
-    // handle any post actions if appropriate
-    $this->tools->action->handle();
+    $this->args = $args;
+
+    $this->sendEvent('onPageLoad');
 
     // Load the cached view/controller
     ob_start();
     echo $this->tools->cache->load($path);
     $out=ob_get_clean();
-    
+
     $doc = new DOMDocument();
 
     // if ($out==''){print_r(get_defined_vars());}
@@ -72,9 +76,22 @@ class RedView_Router extends RedView_ABase {
 
 
   /**
-   redirect browser to another URL
+   * Redirect
+   *
+   * Redirect browser to another URL. Immediately
+   * terminates the current page lifecycle.
+   *
+   * @param string $url
+   *		Absolute or relative URL to redirect to.
+   *
+   * @param bool $permanent
+   * 		Serve '301 Moved Permanently' if true
    */
   public function redirect ($url, $permanent=false) {
+
+    $event = $this->sendEvent('onRedirect');
+
+    if ($event->isCanceled) return;
 
     if (!strpos($url, '://')) {
       $url = trim($url,'/');
@@ -87,32 +104,59 @@ class RedView_Router extends RedView_ABase {
 
 
   /**
-   base URL of current site
+   * End
+   *
+   * Redirect to current page and optionally
+   * set a slot to a value.
+   *
+   * @param string $slot
+   * 		Slot key to set
+   *
+   * @param mixed $value
+   * 		Value to set
+   */
+  public function end ($slot=null, $value='') {
+    if ($slot) RedView::setSlot($slot, $value);
+    $path = trim(implode('/', $this->args), '/');
+    $this->redirect("/$path/");
+  }
+
+  /**
+   * Get URL base
+   *
+   * get base URL of current site
+   *
+   * @return string
    */
   public function getUrlBase() {
     return 'http'
-    .(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's' : '')
-    .'://'.$_SERVER['SERVER_NAME']
-    .($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '');
+    .  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's' : '')
+    .  '://'.$_SERVER['SERVER_NAME']
+    .  ($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '');
   }
+
   /**
-   path of current url (as shown in browser)
+   * Get URL path
+   *
+   * @return string
+   * 		path of current url (as shown in browser)
    */
   public function getUrlPath() {
     return $this->getUrlBase().$this->getPathFromString($_SERVER['REQUEST_URI']);
   }
 
   /**
-   path of current script (before any url rewriting)
+   * Get script path
+   *
+   * @return string
+   * 		path of current script (before any url rewriting)
    */
   public function getScriptPath() {
     return $this->getUrlBase().$this->getPathFromString($_SERVER['SCRIPT_NAME']);
   }
 
-  /**
-   extract path from string
-   */
-  public function getPathFromString($file) {
+
+  protected function getPathFromString($file) {
     preg_match_all('/.*\//', $file, $match, PREG_PATTERN_ORDER);
     return $match[0][0];
   }

@@ -4,7 +4,7 @@
  * Responsible for caching a parsed view markup file to a php file.
  *
  */
-class RedView_Cache extends RedView_ABase {
+class RedView_Cache extends RedView_Base {
 
   /**
    * When turned on, cached files won't be overwritten.
@@ -19,7 +19,7 @@ class RedView_Cache extends RedView_ABase {
    * 
    * @var string
    */
-  public $cacheDir = '/tmp/rv-cache';
+  public $cachePath = '/tmp/rv-cache';
   /**
    * Default view class (controller) to load when no .php file is present.
    * 
@@ -27,6 +27,26 @@ class RedView_Cache extends RedView_ABase {
    */
   public $defaultView = 'RedView_View';
 
+  /**
+   * Apply options.
+   * 
+   * @param array $options
+   * 		Options to apply.
+   */
+  public function applyOptions ($options=array()) {
+  
+    if (isset($options['cache_enabled'])) {
+      $this->cacheOn = $options['cache_enabled'];
+    }
+    if (isset($options['cache_path'])) {
+      $this->cachePath = $options['cache_path'];
+    }
+    if (isset($options['view_class_default'])) {
+      $this->defaultView = $options['view_class_default'];
+    }
+    
+  }
+  
   /**
    * Load a cached view/controller.
    *
@@ -52,7 +72,7 @@ class RedView_Cache extends RedView_ABase {
   public function findLoader ($file) {
     $realFile = "{$this->tools->parser->viewDir}/$file";
     $sha1     = sha1($realFile);
-    $cachedir = $this->cacheDir;
+    $cachedir = $this->cachePath;
     $cache    = $cachedir . '/' . basename($realFile) . ".$sha1";
     $loader   = "$cache.loader.php";
     if (!$this->cacheOn || !file_exists($loader) || filemtime($loader)<filemtime($file)) {
@@ -73,14 +93,17 @@ class RedView_Cache extends RedView_ABase {
     $classFile = dirname($file) . '/' . implode('', explode('_', basename($file, '.html') . '.php'));
     $class = $this->getClassFromFile($classFile);
     if (!$class) $class = $this->defaultView;
-    file_put_contents("$cache.loader.php", "<?php /* $classFile */ ".
-        (file_exists($classFile) ? "
-        require_once '$classFile';" : "")." 
+    file_put_contents("$cache.loader.php", "
+    	<?php /* $classFile */ ".
+        (file_exists($classFile) ? "require_once '$classFile';" : "")." 
         \$view = new $class(); 
-      	if (!isset(\$_params)) \$_params = array();
-        foreach (\$_params as \$_k=>\$_v) \$view->set(\$_k, \$_v); 
+      	if (!isset(\$params)) \$params = array();
+        foreach (\$params as \$k=>\$v) \$view->set(\$k, \$v); 
+        unset (\$params);
         \$view->beforeRender(); 
-        \$view->loadCache('$cache.php');");
+        \$view->includeFile('$cache.php');
+        \$view->afterRender(); 
+    ");
   }
 
   /**

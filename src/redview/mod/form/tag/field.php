@@ -3,7 +3,7 @@
 /**
  override form fields
  */
-class RedView_Tag_Field extends RedView_Tag_AClassTag {
+class RedView_Mod_Form_Tag_Field extends RedView_Mod_Markup_ClassTag {
 
   public $value;
 

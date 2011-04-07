@@ -4,7 +4,7 @@
  * Responsible for "parsing" a view markup file into a cached php file.
  *
  */
-class RedView_Parser extends RedView_ABase {
+class RedView_Parser extends RedView_Base {
 
   /**
    * Path to look for views, relative to the application root.
@@ -120,7 +120,7 @@ class RedView_Parser extends RedView_ABase {
      }
      */
     $list = $xpath->evaluate("/fakeroot//*");
-    $this->currentIndex=$i=0;
+    $this->currentIndex=0;
     foreach ($list as $node) {
 
       $this->currentNode = &$node;
@@ -134,13 +134,12 @@ class RedView_Parser extends RedView_ABase {
       else
       continue;
 
-      $this->currentIndex=++$i;
+      ++$this->currentIndex;
 
       $params=array();
       if ($node->hasAttributes()) foreach ($node->attributes as $attrib) {
         $params[$attrib->name]=$attrib->value;
       }
-      $vars = get_defined_vars();
 
       $obj=new $class($this->currentNode->nodeName, $params);
 

@@ -1,6 +1,6 @@
 <?php
 
-class RedView_Tag_Each extends RedView_ATag {
+class RedView_Mod_Markup_Tag_Each extends RedView_Mod_Markup_Tag {
 
   public static function register ($parser) {
     $parser->register('r:each', __CLASS__);

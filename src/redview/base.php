@@ -5,23 +5,25 @@
  * @author owner
  *
  */
-abstract class RedView_ABase implements RedView_Event_ISender, RedView_Event_IListener {
+abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_IListener {
+  
   /**
-   * @var RedView_Toolbox
+   * @var RedView_Toolbox $tools
    */
   public $tools;
   
   /**
    * Send an event.
    * 
-   * @param $name
+   * @param string $name
    * 		Name of event to send.
-   * @param $extra
+   * 
+   * @param mixed $extra
    * 		Extra data to send with event
    */
   public function sendEvent ($name, $extra=null) {
     $events = $this->tools->events;
-    $events::dispatch($name, $this, $extra);
+    return $events::dispatch($name, $this, $extra);
   }
   
   /**
@@ -29,6 +31,7 @@ abstract class RedView_ABase implements RedView_Event_ISender, RedView_Event_ILi
    * 
    * @param string $eventName
    * 		Name of event to listen for.
+   * 
    * @param string $callbackName
    * 		Name of callback method.
    */
@@ -36,6 +39,16 @@ abstract class RedView_ABase implements RedView_Event_ISender, RedView_Event_ILi
     $callbackName || ($callbackName = $eventName);
     $events = $this->tools->events;
     $events::register($eventName, array($this, $callbackName));
+  }
+
+  /**
+   * Apply options.
+   * 
+   * @param array $options
+   * 		Options to apply.
+   */
+  public function applyOptions ($options) {
+    // override me
   }
   
 }

@@ -1,6 +1,6 @@
 <?php
 
-class RedView_Tag_Format extends RedView_ATag {
+class RedView_Mod_Markup_Tag_Format extends RedView_Mod_Markup_Tag {
 
   public static function register ($parser) {
     $parser->register('r:format', __CLASS__);

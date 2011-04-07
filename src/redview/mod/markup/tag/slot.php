@@ -1,13 +1,12 @@
 <?php
 
 
-class RedView_Tag_Slot extends RedView_ATag {
+class RedView_Mod_Markup_Tag_Slot extends RedView_Mod_Markup_Tag {
 
   public static function register ($parser) {
     $parser->register('r:slot', __CLASS__);
   }
 
-  public static $slots;
   public static $names;
 
   public function markup (RedView_Parser $parser) {
@@ -23,16 +22,16 @@ class RedView_Tag_Slot extends RedView_ATag {
     if (isset($this->attribs['set'])) $set = $this->attribs['set'];
     
     if ($get) {
-      $slot = "RedView_Tag_Slot::\$slots[\"$get\"]";
+      $slot = "RedView::\$slots[\"$get\"]";
       $pi = $doc->createProcessingInstruction('php',
         		"if (isset($slot)) echo $slot");
     }
     elseif ($set) {
       $pi = $doc->createProcessingInstruction('php',
-          		"ob_start(); RedView_Tag_Slot::\$names[]='$set';");
+          		"ob_start(); ".__CLASS__."::\$names[]='$set';");
 
       $pi2 = $doc->createProcessingInstruction('php',
-          		"RedView_Tag_Slot::\$slots[array_pop(RedView_Tag_Slot::\$names)]=ob_get_clean();");
+          		"RedView::\$slots[array_pop(".__CLASS__."::\$names)]=ob_get_clean();");
     }
 
     $node->parentNode->insertBefore($pi, $node);
