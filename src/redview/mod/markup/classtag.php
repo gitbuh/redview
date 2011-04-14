@@ -2,79 +2,65 @@
 
 abstract class RedView_Mod_Markup_ClassTag extends RedView_Mod_Markup_Tag {
 
-
-  
-  /**
-      Keep outer HTML
-  */
-  public $keepOuter=false;
   
   public static $tags;
 
-  
   /**
-      What to do when tag is pushed onto stack
-      for example start output buffering
-  */
-  public function open () { }
-  
-  /**
-      What to do when tag is popped off the stack
-      for example get output buffer, manipulute, and output
-  */
-  public function close () { }
-  
-  public function markup ($parser) {
-    
-    if ($this->isInert($parser)) return;
-    
-    $doc    = $parser->currentDocument;
+   * View object. 
+   * 
+   * @var RedView_View
+   */
+  public $view;
+
+  public function markup (RedView_Core_Parser $parser) {
+
+    $dom    = $parser->currentDocument;
     $node   = $parser->currentNode;
-    $open   = $this->prefixNode($parser);
-    $close  = $this->suffixNode($parser);
+    $class  = get_class($this);
+  
+    $attributes = array();
+    if ($node->hasAttributes()) {
+      foreach ($node->attributes as $attribute) {
+        $attributes[$attribute->name] = $attribute->value;
+      }
+    }
     
-    if ($open) $node->parentNode->insertBefore($open, $node);
-    if ($this->keepOuter) {
-      if ($close) {
-        $node->parentNode->insertBefore($close, $node);
-        $node->parentNode->insertBefore($node, $close);
-      }
-    }
-    else {
-      while ($node->childNodes->length) {
-        $node->parentNode->insertBefore($node->childNodes->item(0), $node);
-      }
-      if ($close) {
-        $node->parentNode->replaceChild($close, $node);
-      }
-      else {
-        $node->parentNode->removeChild($node);
-      }
-    }
-  }
-  
-  public function isInert ($parser) {
-    return false;
-  } 
-  
-  /**
-      Open processing instruction
-  */
-  public function prefixNode ($parser) { 
-    $doc    = $parser->currentDocument;
-    $class  = get_class($this);
     $atts   = var_export($this->attribs, true);
-    $tag = get_class($this);
-    return $doc->createProcessingInstruction("php", "\${-1}=new $class('{$parser->currentNode->nodeName}', $atts, \$this); $class::\$tags[]=\${-1}; \${-1}->open()");
+    
+    $pi = $dom->createProcessingInstruction('php', 
+			"$class::open(\$this, '{$this->name}', $atts);");
+    
+    $pi2 = $dom->createProcessingInstruction('php',
+			"$class::close();");
+  
+    $node->parentNode->insertBefore($pi, $node);
+
+    while ($node->childNodes->length) {
+      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
+    }
+    
+    $node->parentNode->replaceChild($pi2, $node);
   }
   
-  /**
-      Closing processing instruction
-  */
-  public function suffixNode ($parser) { 
-    $doc = $parser->currentDocument;
-    $class  = get_class($this);
-    return $doc->createProcessingInstruction("php", "\${-1}=array_pop($class::\$tags); \${-1}->close()");
+  public static function open ($view, $name, $attribs) {
+    $class = get_called_class();
+    $tag = new $class();
+    
+    $tag->view     = $view;
+    $tag->name     = $name;
+    $tag->attribs  = $attribs;
+    
+    $tag->onOpen();
+    
+    self::$tags[] = $tag;
+    
+  }
+  
+  public static function close () {
+    
+    $tag = array_pop(self::$tags);
+    $tag->onClose();
+    
   }
   
 }

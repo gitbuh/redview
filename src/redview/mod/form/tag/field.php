@@ -4,20 +4,18 @@
  override form fields
  */
 class RedView_Mod_Form_Tag_Field extends RedView_Mod_Markup_ClassTag {
-
-  public $value;
-
-  public static function register ($parser) {
-    $parser->register('input', __CLASS__);
-    $parser->register('select', __CLASS__);
-    $parser->register('textarea', __CLASS__);
-  }
-
-  public function open () {
+  
+  /**
+   * Open tag.
+   * 
+   * @param string $name
+   * @param array $attribs
+   */
+  public function onOpen () {
     ob_start();
   }
 
-  public function close () {
+  public function onClose () {
 
     $tag=$this->name;
     $attribs=$this->attribs;
@@ -25,16 +23,16 @@ class RedView_Mod_Form_Tag_Field extends RedView_Mod_Markup_ClassTag {
     $selfclose=true;
     $atts='';
     $viewClass = get_class($this->view);
-
+    
     if (preg_match('/^(textarea|select)$/i',$tag)) {
       $selfclose=false;
     }
 
-    if (@$_SESSION['_rv']['fields'][$viewClass][$attribs['name']]) {
+    if (isset ($_SESSION['_rv']['fields'][$viewClass][$attribs['name']])) {
       $attribs['value']=$_SESSION['_rv']['fields'][$viewClass][$attribs['name']];
     }
 
-    if (@$attribs['value']) {
+    if (isset ($attribs['value'])) {
 
       if ($tag=='textarea') {
         $content = $attribs['value'];
@@ -65,29 +63,6 @@ class RedView_Mod_Form_Tag_Field extends RedView_Mod_Markup_ClassTag {
     echo RedView::fromXml($outer);
 
   }
-
-  /**
-   Put a node before this node when writing to cache
-   */
-  public function prefixNode ($parser) {
-    $this->keepOuter = true;
-    if (@$this->attribs['type']=='submit' || @$this->attribs['type']=='button') return;
-    $this->keepOuter = false;
-    return parent::prefixNode($parser);
-  }
-
-  /**
-   Put a node after this node when writing to cache
-   */
-  public function suffixNode ($parser) {
-    $this->keepOuter = true;
-    if (@$this->attribs['type']=='submit' || @$this->attribs['type']=='button') return;
-    $this->keepOuter = false;
-    return parent::suffixNode($parser);
-  }
-
-
-
+  
 }
-
 

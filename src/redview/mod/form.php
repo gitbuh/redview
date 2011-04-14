@@ -15,21 +15,13 @@ class RedView_Mod_Form extends RedView_Mod {
    */
   public static $ttl=300;
   
-  /**
-   * Whether encryption is enabled.
-   * 
-   * FIXME: Things will currently break if encryption is not enabled.
-   * 
-   * @var bool
-   */
-  public $useEncryption = true;
   
   /**
    * Application-specific secret password. Override in app.ini. 
    * 
    * @var string
    */
-  public $password='change_me';
+  public static $password='change_me';
 
   /**
    * Initialize the plugin.
@@ -80,10 +72,18 @@ class RedView_Mod_Form extends RedView_Mod {
   public function parseNode(RedView_Event $event) {
 
     /**
-     * @var RedView_Parser
+     * @var RedView_Core_Parser
      */
     $parser   = $event->sender;
-    $node     = &$parser->currentNode;
+    
+    /**
+     * @var DOMNode
+     */
+    $node     = $parser->currentNode;
+    
+    /**
+     * @var unknown_type
+     */
     $tag      = null;
     
     switch ($node->nodeName) {
@@ -91,24 +91,20 @@ class RedView_Mod_Form extends RedView_Mod {
       case 'form':
         $tag = new RedView_Mod_Form_Tag_Form();
         break;
-      case 'field':
+      case 'input':
+      case 'textarea':
+      case 'select':
         $tag = new RedView_Mod_Form_Tag_Field();
         break;
       default:
         return;
     }
       
-    $attributes = array();
-    if ($node->hasAttributes()) {
-      foreach ($node->attributes as $attribute) {
-        $attributes[$attribute->name] = $attribute->value;
-      }
-    }
+    $tag->fromNode($node);
     
-    $tag->parser   = $parser;
-    $tag->attribs  = $attributes;
+    $tag->markup($parser);
     
-    $tag->markup();
+    $event->cancel();
 
   }
   
@@ -122,7 +118,7 @@ class RedView_Mod_Form extends RedView_Mod {
    */
   public function onPageLoad (RedView_Event $event) {
     
-        // if no action was present, return.
+    // if no action was present, get form values from session and return.
     if (!isset($_REQUEST['_rv:data'])) return;
     
     $data = $_REQUEST['_rv:data'];
@@ -130,7 +126,7 @@ class RedView_Mod_Form extends RedView_Mod {
     $code = substr($data, 0, 2);
     $data = substr($data, 2, strlen($data)-2);
     
-    $decrypted=$this->decrypt($data,  $code . substr(session_id(), 0, 6));
+    $decrypted=self::decrypt($data,  $code . substr(session_id(), 0, 6));
     $a = unserialize($decrypted) or die ("Your session has expired!");
     
     list ($view, $method, $session, $expire) = $a;
@@ -152,8 +148,8 @@ class RedView_Mod_Form extends RedView_Mod {
     
     $class = get_class($view);
     
-    @$_SESSION['_rv']['fields']         || $_SESSION['_rv']['fields'] = array();
-    @$_SESSION['_rv']['fields'][$class] || $_SESSION['_rv']['fields'][$class] = array();
+    isset ($_SESSION['_rv']['fields'])         || $_SESSION['_rv']['fields'] = array();
+    isset ($_SESSION['_rv']['fields'][$class]) || $_SESSION['_rv']['fields'][$class] = array();
     $_SESSION['_rv']['fields'][$class] = array_merge($_SESSION['_rv']['fields'][$class], $_REQUEST);
     
     $result = call_user_func(array($view, $method));
@@ -161,8 +157,6 @@ class RedView_Mod_Form extends RedView_Mod {
     $this->tools->router->end();
     
   }
-  
-
 
   /**
    * Serialize and encrypt an object, one of its methods, and some additional data.
@@ -176,7 +170,7 @@ class RedView_Mod_Form extends RedView_Mod {
    */
   public static function serializeCallbackObject($obj, $method) {
     $code=substr(base_convert(mt_rand(33, 1024), 10, 32), 0, 2);
-    return $code . $this->encrypt(serialize(
+    return $code . self::encrypt(serialize(
       array($obj, $method, session_id(), time() + self::$ttl)
     ),  $code . substr(session_id(), 0, 6));
   } 
@@ -194,9 +188,8 @@ class RedView_Mod_Form extends RedView_Mod {
    * @return string
    * 		Base-64 encoded encrypted text
    */
-  protected function encrypt ($text, $initVector) {
-    if (!$this->useEncryption) return $text;
-    return openssl_encrypt($text, 'DES3', $this->password, false, $initVector);
+  public static function encrypt ($text, $initVector) {
+    return openssl_encrypt($text, 'DES3', self::$password, false, $initVector);
   }
   
   /**
@@ -211,9 +204,10 @@ class RedView_Mod_Form extends RedView_Mod {
    * @return string
    * 		Decrypted text
    */
-  protected function decrypt ($text, $initVector) {
-    if (!$this->useEncryption) return $text;
-    return openssl_decrypt($text, 'DES3', $this->password, false, $initVector);
+  public static function decrypt ($text, $initVector) {
+    $out = openssl_decrypt($text, 'DES3', self::$password, false, $initVector);
+    error_log('deserialized: ' . $out);
+    return $out;
   }
   
   

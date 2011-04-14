@@ -1,12 +1,37 @@
 <?php
 
-class RedView_Router extends RedView_Base {
+class RedView_Core_Router extends RedView_Core {
 
-  public $pageDir='page';
+  public $pagePath='page';
+  
+  public $viewPath='view';
+  
   public $defaultPage='home';
 
   public $args;
 
+  /**
+   * Apply options.
+   * 
+   * @param RedView_Options $options
+   * 		Options to apply.
+   */
+  public function applyOptions (RedView_Options $options=null) {
+    
+    if (!$options) return;
+  
+    if (isset($options->view_path)) {
+      $this->viewPath = $options->view_path;
+    }
+    if (isset($options->view_page_path)) {
+      $this->pagePath = $options->view_page_path;
+    }
+    if (isset($options->view_page_default)) {
+      $this->defaultPage = $options->view_page_default;
+    }
+    
+  }
+  
   /**
    base URL of current site
    */
@@ -15,8 +40,8 @@ class RedView_Router extends RedView_Base {
     $this->sendEvent('beforePageLoad');
 
     $defaultPage=$this->defaultPage.'/';
-    $pageDir=$this->pageDir;
-    $viewDir=$this->tools->parser->viewDir;
+    $pagePath=$this->pagePath;
+    $viewPath=$this->viewPath;
 
     if (!isset($_REQUEST['_rv:page'])) $_REQUEST['_rv:page']="";
 
@@ -40,8 +65,8 @@ class RedView_Router extends RedView_Base {
     $page .= '/';
     while ($page && $lastPage != $page) {
       $lastPage = $page;
-      if (strpos($page,'..')===false && file_exists("$viewDir/$pageDir/$page.html")) {
-        $path =  "$pageDir/$page.html";
+      if (strpos($page,'..')===false && file_exists("$viewPath/$pagePath/$page.html")) {
+        $path =  "$pagePath/$page.html";
         break;
       }
       $a = explode('/', $page);
@@ -50,7 +75,7 @@ class RedView_Router extends RedView_Base {
     }
 
     // requested a non-existing top level path; redirect to front page
-    if (!$path || !file_exists("$viewDir/$path")) $this->redirect($defaultPage, true);
+    if (!$path || !file_exists("$viewPath/$path")) $this->redirect($defaultPage, true);
 
     // make argv
     $args=explode('/', trim(substr($_REQUEST['_rv:page'], strlen($page)), '/'));
@@ -70,6 +95,8 @@ class RedView_Router extends RedView_Base {
 
     // if ($out==''){print_r(get_defined_vars());}
 
+    error_log($out);
+    
     $doc->loadHTML($out);
     echo $doc->saveHTML();
   }
@@ -91,7 +118,7 @@ class RedView_Router extends RedView_Base {
 
     $event = $this->sendEvent('onRedirect');
 
-    if ($event->isCanceled) return;
+    if ($event && $event->isCanceled) return;
 
     if (!strpos($url, '://')) {
       $url = trim($url,'/');

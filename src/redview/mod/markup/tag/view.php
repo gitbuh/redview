@@ -2,11 +2,7 @@
 
 class RedView_Mod_Markup_Tag_View extends RedView_Mod_Markup_Tag {
 
-  public static function register ($parser) {
-    $parser->register('r:view', __CLASS__);
-  }
-
-  public function markup (RedView_Parser $parser) {
+  public function markup (RedView_Core_Parser $parser) {
 
     $doc = $parser->currentDocument;
     $node = $parser->currentNode;

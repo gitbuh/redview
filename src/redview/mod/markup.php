@@ -34,34 +34,29 @@ class RedView_Mod_Markup extends RedView_Mod {
   public function parseNode(RedView_Event $event) {
 
     /**
-     * @var RedView_Parser
+     * @var RedView_Core_Parser
      */
     $parser   = $event->sender;
-    $node     = &$parser->currentNode;
+    $node     = $parser->currentNode;
     $class    = null;
     $tag      = null;
     
+    // all built-in tags have "r:" prefix
     if (strpos($node->nodeName,'r:')!==0) return;
     
-    $class = 'RedView_Mod_Markup_Tag_' . substr($node->nodeName, 2);
+    $class = __CLASS__ . '_Tag_' . substr($node->nodeName, 2);
     
     if (!class_exists($class)) return;
 
     $tag = new $class();
-    
-    $attributes = array();
-    if ($node->hasAttributes()) {
-      foreach ($node->attributes as $attribute) {
-        $attributes[$attribute->name] = $attribute->value;
-      }
-    }
 
-    $tag->name     = $node->nodeName;
-    $tag->parser   = $parser;
-    $tag->attribs  = $attributes;
+    $tag->fromNode($node);
 
-    $tag->markup();
+    // tag does its thing here
+    $tag->markup($parser);
 
+    // cancel the event, the current node has probably been destroyed by now anyway
+    $event->cancel();
   }
 
 }

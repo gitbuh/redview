@@ -5,14 +5,10 @@
 */
 class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
   
-  public static function register ($parser) {
-    $parser->register('form', __CLASS__);
-  }
-  
   /**
       Put a node before this node when writing to cache
   */
-  public function markup ($parser) {
+  public function markup (RedView_Core_Parser $parser) {
     
     $doc    = $parser->currentDocument;
     $node   = $parser->currentNode;

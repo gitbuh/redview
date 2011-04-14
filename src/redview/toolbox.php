@@ -6,41 +6,57 @@
 class RedView_Toolbox {
 
   /**
-   * @var string
-   */
-  public $events = 'RedView_Event';
-  
-  /**
-   * @var RedView_Parser
-   */
-  public $parser;
-  
-  /**
-   * @var RedView_Router
-   */
-  public $router;
-  
-  /**
-   * @var RedView_Cache
+   * @var RedView_Core_Cache
    */
   public $cache;
   
   /**
-   * Array of loaded module objects, keyed by class name.
-   * 
-   * @var array<string, Redview_Mod>
+   * @var RedView_Core_Mod
    */
-  public $mod;
-
-  public function __construct () {
+  public $mods;
   
-    $this->cache  = new RedView_Cache();
-    $this->parser = new RedView_Parser();
-    $this->router = new RedView_Router();
+  /**
+   * @var RedView_Core_Events
+   */
+  public $events;
+  
+  /**
+   * @var RedView_Core_Parser
+   */
+  public $parser;
+  
+  /**
+   * @var RedView_Core_Router
+   */
+  public $router;
+  
+  /**
+   * @var RedView_Core_Xml
+   */
+  public $xml;
+  
+  
+
+  /**
+   * Toolbox constructor
+   * 
+   * @param array $options
+   */
+  public function __construct ($options=array()) {
+  
+    $this->cache  = new RedView_Core_Cache();
+    $this->mods   = new RedView_Core_Mods();
+    $this->events = new RedView_Core_Events();
+    $this->parser = new RedView_Core_Parser();
+    $this->router = new RedView_Core_Router();
+    $this->xml    = new RedView_Core_Xml();
     
-    $this->cache->tools  = $this;
-    $this->parser->tools = $this;
-    $this->router->tools = $this;
+    $this->cache->setup($options, $this);
+    $this->mods->setup($options, $this);
+    $this->events->setup($options, $this);
+    $this->parser->setup($options, $this);
+    $this->router->setup($options, $this);
+    $this->xml->setup($options, $this);
     
   }
   

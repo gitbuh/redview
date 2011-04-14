@@ -19,11 +19,10 @@ abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_ILis
    * 		Name of event to send.
    * 
    * @param mixed $extra
-   * 		Extra data to send with event
+   * 		Extra data to send with event.
    */
-  public function sendEvent ($name, $extra=null) {
-    $events = $this->tools->events;
-    return $events::dispatch($name, $this, $extra);
+  final public function sendEvent ($name, $extra=null) {
+    return $this->tools->events->dispatch($name, $this, $extra);
   }
   
   /**
@@ -35,10 +34,25 @@ abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_ILis
    * @param string $callbackName
    * 		Name of callback method.
    */
-  public function listen ($eventName, $callbackName=null) {
+  final public function listen ($eventName, $callbackName=null) {
     $callbackName || ($callbackName = $eventName);
-    $events = $this->tools->events;
-    $events::register($eventName, array($this, $callbackName));
+    $callbackMethod = array($this, $callbackName);
+    return $this->tools->events->register($eventName, $callbackMethod);
+  }
+
+  /**
+   * Set up the object.
+   * 
+   * @param array $options
+   *   		optional options
+   *   
+   * @param RedView_Toolbox $tools 
+   * 		optional custom tools
+   */
+  public function setup ($options=array(), RedView_Toolbox $tools=null) {
+    if (!$options) $options = array();
+    $this->applyOptions($options);
+    $this->tools = $tools ? $tools : RedView::$tools;
   }
 
   /**

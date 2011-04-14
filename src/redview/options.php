@@ -3,7 +3,7 @@
 /**
  * Default Options
  */
-class RedView_Options extends ArrayObject {
+class RedView_Options {
   
 // RedView looks for this file and applies settings from it.
 
@@ -20,18 +20,18 @@ class RedView_Options extends ArrayObject {
 
 //    [parser]
 
-// needs to be the same as the router's viewDir.
+// needs to be the same as the router's viewPath.
 
   public $view_path     = 'view';
 
 //    [router]
 
-// needs to be directly inside the viewDir.
+// needs to be directly inside the viewPath.
 
   public $view_page_path     = 'page';
 
 // a page named (defaultPage)'.html' needs to be 
-// directly inside the pageDir.
+// directly inside the pagePath.
 
   public $view_page_default = 'home';
   

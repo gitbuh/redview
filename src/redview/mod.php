@@ -5,11 +5,10 @@
  *
  */
 class RedView_Mod extends RedView_Base {
-
-  /**
-   * @var array $options
-   */
-  public $options = array();
+  
+  public function __construct ($options=array(), RedView_Toolbox $tools=null) {
+    $this->setup($options, $tools);
+  }
   
   /**
    * Set up the plugin.
@@ -21,20 +20,19 @@ class RedView_Mod extends RedView_Base {
    * 		optional custom tools
    */
   public function setup ($options=array(), RedView_Toolbox $tools=null) {
-    if (!$options) $options = array();
-    $this->applyOptions($options);
-    $this->tools = $tools ? $tools : RedView::$tools;
-    $this->tools->mod[get_class($this)] = $this;
+    parent::setup($options, $tools);
+    $this->tools->mods->set(get_class($this), $this);
   }
   
   /**
    * Initialize prerequisite plugin if needed
    * 
-   * @param unknown_type $class
+   * @param string $class
    */
   public function depends ($class) {
-    if (!$this->tools->mod[$class]) {
-      $obj = new $class($this->options, $this->tools);
+    if (!$this->tools->mods->get($class)) {
+      $obj = new $class();
+      $obj->setup($this->options, $this->tools);
     }
   }
   

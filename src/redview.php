@@ -22,25 +22,31 @@ class RedView extends RedView_View {
       init
       
       start the RedView page lifecycle.
-      
+      @param array options
       @param RedView_Toolbox $tools optional custom tools
       @return RedView_Toolbox
   */
-  public static function init (RedView_Toolbox $tools=null) {
+  /**
+   * Setup
+   * 
+   * Initialize RedView tools and options
+   * 
+   * @param array $options
+   * @param RedView_Toolbox $tools
+   * @return RedView_Toolbox
+   */
+  public static function setup ($options=array(), RedView_Toolbox $tools=null) {
     session_start();
-    self::$tools = $tools ? $tools : new RedView_Toolbox();
+    self::$tools = $tools ? $tools : new RedView_Toolbox($options);
     return self::$tools;
   }
-
-  /** 
-      setup
-      
-      start the RedView page lifecycle.
-      
-      @return mixed
-  */
-  public static function setup() {
-    if (!self::$tools) self::init();
+  
+/**
+ * Go
+ * 
+ * Start the RedView page lifecycle.
+ */
+  public static function go () {
     self::$tools->router->loadPage();
   }
   
@@ -60,7 +66,6 @@ class RedView extends RedView_View {
       		Array of page args, or arg at requested index.
   */
   public static function args ($index=-1) {
-    if (!self::$tools) self::init();
     $args = self::$tools->router->args;
     return $index>-1 ? $args[index] : $args;
   }
@@ -96,7 +101,6 @@ class RedView extends RedView_View {
       @return mixed
   */
   public static function redirect ($url) {
-    if (!self::$tools) self::setup(); 
     return self::$tools->router->redirect($url);
   }
   
@@ -110,21 +114,19 @@ class RedView extends RedView_View {
       @return mixed
   */
   public static function end ($k, $v) {
-    if (!self::$tools) self::setup(); 
     return self::$tools->router->end($k, $v);
   }
   
   public static function load ($file) {
-    if (!self::$tools) self::setup(); 
     self::$tools->cache->load($file);
   }
   
   public static function toXml ($string) { 
-    return RedView_Xml::toXml($string);
+    return self::$tools->xml->toXml($string);
   }
   
   public static function fromXml ($xml) {
-    return RedView_Xml::fromXml($xml);
+    return self::$tools->xml->fromXml($xml);
   }
   
   

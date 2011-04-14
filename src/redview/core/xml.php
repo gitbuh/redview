@@ -3,7 +3,7 @@
 /**
  * XML helper class.
  */
-class RedView_Xml {
+class RedView_Core_Xml extends RedView_Core {
 
   /**
    * Convert text to a SimpleXML node collection.
@@ -14,7 +14,7 @@ class RedView_Xml {
    * @return SimpleXMLElement
    * 		SimpleXML node collection.
    */
-  public static function toXml ($string) { 
+  public function toXml ($string) { 
     $doc = new DOMDocument();
     $root=$doc->createElement('fakeroot');
     $frag=$doc->createDocumentFragment();
@@ -34,7 +34,7 @@ class RedView_Xml {
    * @return string
    * 		String containing XML markup.
    */
-  public static function fromXml ($xml) {
+  public function fromXml ($xml) {
     $content='';
     foreach ($xml as $i=>$e) {
       $content.=$e->asXML();

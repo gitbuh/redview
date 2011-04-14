@@ -4,7 +4,7 @@
  * Responsible for caching a parsed view markup file to a php file.
  *
  */
-class RedView_Cache extends RedView_Base {
+class RedView_Core_Cache extends RedView_Core {
 
   /**
    * When turned on, cached files won't be overwritten.
@@ -30,19 +30,21 @@ class RedView_Cache extends RedView_Base {
   /**
    * Apply options.
    * 
-   * @param array $options
+   * @param RedView_Options $options
    * 		Options to apply.
    */
-  public function applyOptions ($options=array()) {
-  
-    if (isset($options['cache_enabled'])) {
-      $this->cacheOn = $options['cache_enabled'];
+  public function applyOptions (RedView_Options $options=null) {
+    
+    if (!$options) return;
+    
+    if (isset($options->cache_enabled)) {
+      $this->cacheOn = $options->cache_enabled;
     }
-    if (isset($options['cache_path'])) {
-      $this->cachePath = $options['cache_path'];
+    if (isset($options->cache_path)) {
+      $this->cachePath = $options->cache_path;
     }
-    if (isset($options['view_class_default'])) {
-      $this->defaultView = $options['view_class_default'];
+    if (isset($options->view_class_default)) {
+      $this->defaultView = $options->view_class_default;
     }
     
   }
@@ -55,7 +57,7 @@ class RedView_Cache extends RedView_Base {
    */
   public function load ($file) {
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots']) && is_array($_SESSION['_rv']['slots'])) {
-      foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView_Tag_Slot::$slots[$k] = $v;
+      foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView::$slots[$k] = $v;
     }
     require $this->findLoader($file);
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots'])) {
@@ -70,7 +72,7 @@ class RedView_Cache extends RedView_Base {
    * @return string path to loader file
    */
   public function findLoader ($file) {
-    $realFile = "{$this->tools->parser->viewDir}/$file";
+    $realFile = "{$this->tools->parser->viewPath}/$file";
     $sha1     = sha1($realFile);
     $cachedir = $this->cachePath;
     $cache    = $cachedir . '/' . basename($realFile) . ".$sha1";
@@ -93,8 +95,8 @@ class RedView_Cache extends RedView_Base {
     $classFile = dirname($file) . '/' . implode('', explode('_', basename($file, '.html') . '.php'));
     $class = $this->getClassFromFile($classFile);
     if (!$class) $class = $this->defaultView;
-    file_put_contents("$cache.loader.php", "
-    	<?php /* $classFile */ ".
+    file_put_contents("$cache.loader.php", 
+    	"<?php /* $classFile */ ".
         (file_exists($classFile) ? "require_once '$classFile';" : "")." 
         \$view = new $class(); 
       	if (!isset(\$params)) \$params = array();

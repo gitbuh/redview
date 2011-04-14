@@ -4,14 +4,14 @@
  * Responsible for "parsing" a view markup file into a cached php file.
  *
  */
-class RedView_Parser extends RedView_Base {
+class RedView_Core_Parser extends RedView_Core {
 
   /**
    * Path to look for views, relative to the application root.
    * 
    * @var string
    */
-  public $viewDir = 'view';
+  public $viewPath = 'view';
 
   /**
    * Whether to preserve whitespace in the XML
@@ -19,36 +19,21 @@ class RedView_Parser extends RedView_Base {
    * @var bool
    */
   public $preserveWhiteSpace = true;
+  
   /**
    * Whether to pretty-print the XML
    * 
    * @var bool
    */
   public $formatOutput = false;
-  /**
-   * Array of registered RedView_Tag objects
-   * 
-   * @var array
-   */
-  public $registry;
-  /**
-   * A comma-delimited list of tags to register
-   *
-   * @var string
-   */
-  public $tags;
-  /**
-   * Whether the parser has been initialized
-   * 
-   * @var bool
-   */
-  public $initted=false;
+  
   /**
    * Current node index (unused)
    * 
    * @var int
    */
   public $currentIndex=0;
+  
   /**
    * Node currently being parsed
    * 
@@ -62,25 +47,29 @@ class RedView_Parser extends RedView_Base {
    * @var DOMDocument
    */
   public $currentDocument=null;
-
+  
   /**
-   * Register a class as a handler for tags.
+   * Name of file currently being parsed
    * 
-   * @param string $tag
-   * @param string $class
+   * @var string
    */
-  public function register ($tag, $class) {
-    $this->registry[$tag]=$class;
-  }
+  public $currentFile=null;
+  
 
   /**
-   * Do initialization if needed.
+   * Apply options.
+   * 
+   * @param RedView_Options $options
+   * 		Options to apply.
    */
-  protected function checkInit () {
-    if ($this->initted) return;
-    $this->initted = true;
-    //TODO: there must be a better way to register tags?
-    foreach (explode(',', $this->tags) as $tag) $tag::register($this);
+  public function applyOptions (RedView_Options $options=null) {
+    
+    if (!$options) return;
+    
+    if (isset($options->view_path)) {
+      $this->viewPath = $options->view_path;
+    }
+    
   }
 
   /**
@@ -90,9 +79,14 @@ class RedView_Parser extends RedView_Base {
    * 		path to file
    */
   public function parseFile ($file) {
+    $this->currentFile = $file;
+    // TODO: unused event
+    $event = $this->sendEvent('parseFile');
+    if ($event->isCanceled) return;
+    
     // if (!$file_exists) debug_print_backtrace();
-    $xml = file_get_contents($file);
-    return $this->parseXml ($xml);
+    $text = file_get_contents($file);
+    return $this->parseText($text);
   }
 
   /**
@@ -101,16 +95,15 @@ class RedView_Parser extends RedView_Base {
    * @param string $xml
    * 		valid xml fragment
    */
-  public function parseXml ($xml) {
-
+  public function parseText ($text) {
+    
     //TODO: fix this primitive doctype removal
-    $xml = preg_replace('/<!DOCTYPE[^>]*>/','',$xml);
-     
-    $this->checkInit();
+    $text = preg_replace('/<!DOCTYPE[^>]*>/', '', $text);
+      
     $doc = new DOMDocument();
     $doc->preserveWhiteSpace = $this->preserveWhiteSpace;
     $doc->formatOutput = $this->formatOutput;
-    $doc->loadXML("<fakeroot>$xml</fakeroot>");
+    $doc->loadXML("<fakeroot>$text</fakeroot>");
     $xpath = new DOMXpath($doc);
 
     /*
@@ -121,29 +114,15 @@ class RedView_Parser extends RedView_Base {
      */
     $list = $xpath->evaluate("/fakeroot//*");
     $this->currentIndex=0;
+    
     foreach ($list as $node) {
 
-      $this->currentNode = &$node;
       $this->currentDocument = &$doc;
+      $this->currentNode = &$node;
 
       $this->sendEvent('parseNode');
-
-      $class='';
-      if (isset($this->registry[$this->currentNode->nodeName]))
-      $class = @$this->registry[$this->currentNode->nodeName];
-      else
-      continue;
-
+      
       ++$this->currentIndex;
-
-      $params=array();
-      if ($node->hasAttributes()) foreach ($node->attributes as $attrib) {
-        $params[$attrib->name]=$attrib->value;
-      }
-
-      $obj=new $class($this->currentNode->nodeName, $params);
-
-      $obj->markup($this);
 
     }
 
