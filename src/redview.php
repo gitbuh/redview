@@ -67,7 +67,7 @@ class RedView extends RedView_View {
   */
   public static function args ($index=-1) {
     $args = self::$tools->router->args;
-    return $index>-1 ? $args[index] : $args;
+    return $index>-1 ? $args[$index] : $args;
   }
   
   /** 
