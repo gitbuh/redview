@@ -55,16 +55,25 @@ class RedView_Mod_Inject extends RedView_Mod {
     
     $d = new DOMDocument();
     $b = $d->importNode($node->cloneNode(false),true);
-    $d->appendChild($b); $h = $d->saveHTML();
+    $d->appendChild($b); 
     
-    foreach ($node->attributes as $attribute) {
-      $this->attribs[$attribute->name] = $attribute->value;
+    // saveHTML annoyingly decides to url encode href attributes.
+    // It also escapes things as html entities.
+    // TODO: figure out a better workaround for this. 
+    $h = html_entity_decode(urldecode($d->saveHTML()));
+    $h2 = '';
+    
+    preg_match('/<\/[^>]+>$/', $h, $m, PREG_OFFSET_CAPTURE);
+    
+    if ($m && $m[0]) {
+      $h = substr($h, 0, $m[0][1]);
+      $h2 = $m[0][0];
     }
     
     $pi = $dom->createProcessingInstruction('php', 
-			"echo '$h'");
+			"echo <<<RV_HEREDOC\n$h\nRV_HEREDOC;\n");
     
-    $pi2 = $dom->createProcessingInstruction('php', " /* */ ");
+    $pi2 = $dom->createProcessingInstruction('php', "echo '$h2';");
   
     $node->parentNode->insertBefore($pi, $node);
 
