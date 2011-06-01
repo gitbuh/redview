@@ -42,7 +42,29 @@ class RedView_Mod_Markup extends RedView_Mod {
     $tag      = null;
     
     // all built-in tags have "r:" prefix
-    if (strpos($node->nodeName,'r:')!==0) return;
+    if (strpos($node->nodeName,'r:')!==0) {
+      // make empty tags html-friendly
+      if ($node->textContent == "") {
+        switch ($node->nodeName) {
+          case "area":
+          case "base":
+          case "basefont":
+          case "br":
+          case "hr":
+          case "input":
+          case "img":
+          case "link":
+          case "meta":
+            if ($node->firstChild) $node->removeChild($node->firstChild);
+            break;
+          default:
+            $node->appendChild(new DOMText(''));
+            break;
+        }
+        
+      }
+      return;
+    }
     
     $class = __CLASS__ . '_Tag_' . substr($node->nodeName, 2);
     

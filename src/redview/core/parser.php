@@ -134,21 +134,22 @@ class RedView_Core_Parser extends RedView_Core {
       }
     }
 
-    $html = '';
+    
+    $out = '';
     $children = $doc->firstChild->childNodes;
     if ($children) {
       foreach ($children as $child) {
-        $html .= $doc->saveXML( $child );
+        $out .= $doc->saveXML( $child );
       }
     }
-    $out = $html;
-
+    
     $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
 
     return $out;
 
   }
-
+  
+  
 
 }
 
