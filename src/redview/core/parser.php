@@ -13,12 +13,6 @@ class RedView_Core_Parser extends RedView_Core {
    */
   public $viewPath = 'view';
 
-  /**
-   * Whether to preserve whitespace in the XML
-   * 
-   * @var bool
-   */
-  public $preserveWhiteSpace = true;
   
   /**
    * Whether to pretty-print the XML
@@ -44,7 +38,7 @@ class RedView_Core_Parser extends RedView_Core {
   /**
    * Document currently being parsed
    * 
-   * @var DOMDocument
+   * @var RedView_DOMDocument
    */
   public $currentDocument=null;
   
@@ -100,8 +94,8 @@ class RedView_Core_Parser extends RedView_Core {
     //TODO: fix this primitive doctype removal
     $text = preg_replace('/<!DOCTYPE[^>]*>/', '', $text);
       
-    $doc = new DOMDocument();
-    $doc->preserveWhiteSpace = $this->preserveWhiteSpace;
+    $doc = new RedView_DOMDocument();
+    $doc->preserveWhiteSpace = true;
     $doc->formatOutput = $this->formatOutput;
     $doc->loadXML("<fakeroot>$text</fakeroot>");
     $xpath = new DOMXpath($doc);
@@ -126,24 +120,23 @@ class RedView_Core_Parser extends RedView_Core {
 
     }
 
-    if (!$this->preserveWhiteSpace) {
-      $list = $xpath->evaluate("//text()");
-      foreach ($list as $node) {
-        $node->data = preg_replace("/\s+$/", " ", $node->data);
-        $node->data = preg_replace("/^\s+/", " ", $node->data);
-      }
+    $list = $xpath->evaluate("//text()");
+    foreach ($list as $node) {
+      $node->data = preg_replace("/\s+$/", " ", $node->data);
+      $node->data = preg_replace("/^\s+/", " ", $node->data);
     }
 
-    
     $out = '';
     $children = $doc->firstChild->childNodes;
     if ($children) {
       foreach ($children as $child) {
-        $out .= $doc->saveXML( $child );
+        $out .= $doc->saveXHTML( $child );
       }
     }
     
     $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
+    // TODO: fix this... probably need to get custom string representation for each node or something
+    $out = preg_replace('/([\'"])\/>/', "$1 />", $out);
 
     return $out;
 

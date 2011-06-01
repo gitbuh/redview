@@ -35,11 +35,30 @@ class RedView_Core_Xml extends RedView_Core {
    * 		String containing XML markup.
    */
   public function fromXml ($xml) {
+    /*
     $content='';
     foreach ($xml as $i=>$e) {
       $content.=$e->asXML();
     }
     return $content;
+    */
+    
+    $out = '';
+    
+    foreach ($xml as $e) {
+      
+      $element = dom_import_simplexml($e);
+      
+      $dom = new RedView_DOMDocument();
+      $element = $dom->importNode($element, true);
+      $element = $dom->appendChild($element);
+      
+      $out .= $dom->saveXHTML();
+      
+    }
+    
+    return $out;
+    
   }
   
   

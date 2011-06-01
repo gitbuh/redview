@@ -91,14 +91,7 @@ class RedView_Core_Router extends RedView_Core {
     echo $this->tools->cache->load($path);
     $out=ob_get_clean();
 
-    $doc = new DOMDocument();
-
-    // if ($out==''){print_r(get_defined_vars());}
-
-    error_log($out);
-    
-    $doc->loadHTML($out);
-    echo $doc->saveHTML();
+    echo $out;
   }
 
 

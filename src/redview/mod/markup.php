@@ -41,43 +41,24 @@ class RedView_Mod_Markup extends RedView_Mod {
     $class    = null;
     $tag      = null;
     
-    // all built-in tags have "r:" prefix
-    if (strpos($node->nodeName,'r:')!==0) {
-      // make empty tags html-friendly
-      if ($node->textContent == "") {
-        switch ($node->nodeName) {
-          case "area":
-          case "base":
-          case "basefont":
-          case "br":
-          case "hr":
-          case "input":
-          case "img":
-          case "link":
-          case "meta":
-            if ($node->firstChild) $node->removeChild($node->firstChild);
-            break;
-          default:
-            $node->appendChild(new DOMText(''));
-            break;
-        }
-        
-      }
-      return;
-    }
+    // make empty tags html-friendly
+    
+    // tags that have no "r:" prefix
+    if (strpos($node->nodeName,'r:')!==0) return;
+    
+    
+    // custom tag does its thing here.
     
     $class = __CLASS__ . '_Tag_' . substr($node->nodeName, 2);
-    
     if (!class_exists($class)) return;
 
+    
     $tag = new $class();
-
     $tag->fromNode($node);
-
-    // tag does its thing here
     $tag->markup($parser);
 
-    // cancel the event, the current node has probably been destroyed by now anyway
+    // cancel the event, the current node has probably been destroyed by now.
+    
     $event->cancel();
   }
 
