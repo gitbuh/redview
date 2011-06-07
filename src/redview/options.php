@@ -43,7 +43,7 @@ class RedView_Options {
 // Time to live. Trying to post a form after this many seconds 
 // will result in an error. Not the same as session timeout.
 
-  public $mod_form_ttl         = 600;     // ten minutes
+  public $mod_form_ttl         = 24000;     // 4 hours
 
 //    [crypto]
 
