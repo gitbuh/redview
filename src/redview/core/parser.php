@@ -113,7 +113,7 @@ class RedView_Core_Parser extends RedView_Core {
 
       $this->currentDocument = &$doc;
       $this->currentNode = &$node;
-
+    
       $this->sendEvent('parseNode');
       
       ++$this->currentIndex;

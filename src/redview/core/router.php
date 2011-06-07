@@ -9,6 +9,8 @@ class RedView_Core_Router extends RedView_Core {
   public $defaultPage='home';
 
   public $args;
+  
+  public $output='';
 
   /**
    * Apply options.
@@ -91,6 +93,10 @@ class RedView_Core_Router extends RedView_Core {
     echo $this->tools->cache->load($path);
     $out=ob_get_clean();
 
+    $this->output = &$out;
+    
+    $this->sendEvent('onFilter');
+    
     echo $out;
   }
 

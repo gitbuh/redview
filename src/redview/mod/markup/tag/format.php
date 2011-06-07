@@ -18,9 +18,8 @@ class RedView_Mod_Markup_Tag_Format extends RedView_Mod_Markup_Tag {
       $list = $xpath->evaluate("node()", $node);
       $xml='';
       foreach ($list as $child) {
-        // TODO: Get rid of html_entity_decode and use original content
-        //  i.e. get XMLDocument not to encode entities in the first place somehow.
-        $xml.=html_entity_decode($dom->saveXML($child));
+        // TODO: HACK. 
+        $xml .= str_replace('&gt;', '>', $dom->saveXHTML($child));
       }
       if ($xml) {
         $pi = $dom->createProcessingInstruction('php', 

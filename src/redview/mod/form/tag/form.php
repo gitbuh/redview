@@ -18,7 +18,7 @@ class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
     $callback = $this->attribs['action'];
     
     $a = $doc->createAttribute('method');
-    $a->value = 'POST';
+    $a->value = 'post';
     $node->appendChild($a);
     
     $a = $doc->createAttribute('enctype');
@@ -31,7 +31,7 @@ class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
     
     $val = "RedView_Mod_Form::serializeCallbackObject(\$this, '$callback')";
     $pi = $doc->createProcessingInstruction('php', 
-      "echo \"<input type='hidden' name='_rv:data' value='\".$val.\"' />\"");
+      "echo \"<div style='display:none'><input type='hidden' name='_rv:data' value='\".$val.\"' /></div>\"");
 
     $node->appendChild($pi);
     
