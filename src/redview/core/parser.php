@@ -79,8 +79,13 @@ class RedView_Core_Parser extends RedView_Core {
       $this->currentNode = &$node;
       $this->sendEvent('parseNode');
     }
-
-    $out = $doc->saveXHTML();
+    
+    $out = '';
+    if ($doc->childNodes) {
+      foreach ($doc->childNodes as $child) {
+        $out .= $doc->saveXHTML( $child );
+      }
+    }
     
     $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
 
