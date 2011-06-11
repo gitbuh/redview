@@ -20,7 +20,6 @@ class RedView_Mod_Markup extends RedView_Mod {
     parent::setup($options, $tools);
 
     $this->listen('parseNode');
-    $this->listen('onFilter');
 
   }
   
@@ -34,9 +33,6 @@ class RedView_Mod_Markup extends RedView_Mod {
    */
   public function parseNode(RedView_Event $event) {
 
-    /**
-     * @var RedView_Core_Parser
-     */
     $parser   = $event->sender;
     $node     = $parser->currentNode;
     $class    = null;
@@ -44,49 +40,20 @@ class RedView_Mod_Markup extends RedView_Mod {
     
     // make empty tags html-friendly
     
-    // tags that have no "r:" prefix
-    if (strpos($node->nodeName,'r:')!==0) {
-      if ($node->nodeName == 'html') {
-        if (!$node->getAttribute('xmlns')) {
-          $node->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-        }
-      }
-      elseif ($node->nodeName == 'img') {
-        if (!$node->getAttribute('alt')) {
-          $node->setAttribute('alt', '');
-        }
-      }
-      return;
-    }
+    // RedView tags must have "r:" prefix... 
+    if (strpos($node->nodeName,'r:')!==0) return;
     
-    
-    // custom tag does its thing here.
-    
+    // ...and they must have a matching class.
     $class = __CLASS__ . '_Tag_' . substr($node->nodeName, 2);
     if (!class_exists($class)) return;
 
-    
+    // tag does its thing.
     $tag = new $class();
     $tag->fromNode($node);
     $tag->markup($parser);
 
     // cancel the event, the current node has probably been destroyed by now.
-    
     $event->cancel();
-  }
-  
-  /**
-   * onFilter
-   *
-   * Event handler for onFilter events.
-   *
-   * @param RedView_Event $event
-   * 		Event object
-   */
-  public function onFilter(RedView_Event $event) {
-    $event->sender->output = '<?xml version="1.0"?>'
-        ."\n".'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-        ."\n".trim($event->sender->output);
   }
 
 }
