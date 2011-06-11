@@ -90,55 +90,38 @@ class RedView_Core_Parser extends RedView_Core {
    * 		valid xml fragment
    */
   public function parseText ($text) {
-    
-    //TODO: fix this primitive doctype removal
-    $text = preg_replace('/<!DOCTYPE[^>]*>/', '', $text);
       
     $doc = new RedView_DOMDocument();
-    $doc->preserveWhiteSpace = true;
+    
     $doc->formatOutput = $this->formatOutput;
-    $doc->loadXML("<fakeroot>$text</fakeroot>");
+    
+    $doc->loadXML("$text");
+    
+    // remove doctype if present
+    if ($doc->doctype) $doc->removeChild($doc->doctype);
+    
     $xpath = new DOMXpath($doc);
 
-    /*
-     $list = $xpath->evaluate("//processing-instruction()");
-     foreach ($list as $node) {
-     $node->nodeValue .= '?';
-     }
-     */
-    $list = $xpath->evaluate("/fakeroot//*");
+    $list = $xpath->evaluate("//*");
     $this->currentIndex=0;
     
     foreach ($list as $node) {
-
       $this->currentDocument = &$doc;
       $this->currentNode = &$node;
-    
       $this->sendEvent('parseNode');
-      
       ++$this->currentIndex;
-
-    }
-
-    $list = $xpath->evaluate("//text()");
-    foreach ($list as $node) {
-      $node->data = preg_replace("/\s+$/", " ", $node->data);
-      $node->data = preg_replace("/^\s+/", " ", $node->data);
     }
 
     $out = '';
-    $children = $doc->firstChild->childNodes;
-    if ($children) {
-      foreach ($children as $child) {
+    if ($doc->childNodes) {
+      foreach ($doc->childNodes as $child) {
         $out .= $doc->saveXHTML( $child );
       }
     }
     
     $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
-    // TODO: fix this... probably need to get custom string representation for each node or something
-    $out = preg_replace('/([\'"])\/>/', "$1 />", $out);
 
-    return $out;
+    return trim($out);
 
   }
   

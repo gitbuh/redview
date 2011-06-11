@@ -138,7 +138,7 @@
 	
 <!-- 
 	<p>
-			Flow control - else statement
+			Flow control - else statement (DEPRECATED)
 	</p>
 	<p></p>
 	<p>
@@ -189,3 +189,83 @@
 	key CDATA #IMPLIED
 	value CDATA #REQUIRED
 	>
+
+<!-- 
+  <p>
+      Flow control - switch block
+  </p>
+  <p></p>
+  <p><b>
+      example:
+  </b></p>
+  <li>
+      &lt;r:switch value="$foo"&gt;
+        <p>
+        &lt;r:case value="1"&gt; Foo equals one. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:case value="2"&gt; Foo equals two. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:default&gt; Foo is something else. &lt;/r:default&gt;
+        </p>
+      &lt;/r:switch&gt;
+  </li>
+-->
+<!ELEMENT r:switch ( r:case, r:default )*>
+
+<!ATTLIST r:switch
+  value CDATA #REQUIRED
+  >
+	
+<!-- 
+  <p>
+      Flow control - switch case
+  </p>
+  <p></p>
+  <p><b>
+      example:
+  </b></p>
+  <li>
+      &lt;r:switch value="$foo"&gt;
+        <p>
+        &lt;r:case value="1"&gt; Foo equals one. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:case value="2"&gt; Foo equals two. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:default&gt; Foo is something else. &lt;/r:default&gt;
+        </p>
+      &lt;/r:switch&gt;
+  </li>
+-->
+<!ELEMENT r:case ANY>
+
+<!ATTLIST r:case
+  value CDATA #REQUIRED
+  >
+  
+<!-- 
+  <p>
+      Flow control - switch default
+  </p>
+  <p></p>
+  <p><b>
+      example:
+  </b></p>
+  <li>
+      &lt;r:switch value="$foo"&gt;
+        <p>
+        &lt;r:case value="1"&gt; Foo equals one. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:case value="2"&gt; Foo equals two. &lt;/r:case&gt;
+        </p>
+        <p>
+        &lt;r:default&gt; Foo is something else. &lt;/r:default&gt;
+        </p>
+      &lt;/r:switch&gt;
+  </li>
+-->
+<!ELEMENT r:default ANY>
