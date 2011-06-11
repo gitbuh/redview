@@ -12,21 +12,6 @@ class RedView_Core_Parser extends RedView_Core {
    * @var string
    */
   public $viewPath = 'view';
-
-  
-  /**
-   * Whether to pretty-print the XML
-   * 
-   * @var bool
-   */
-  public $formatOutput = false;
-  
-  /**
-   * Current node index (unused)
-   * 
-   * @var int
-   */
-  public $currentIndex=0;
   
   /**
    * Node currently being parsed
@@ -41,14 +26,6 @@ class RedView_Core_Parser extends RedView_Core {
    * @var RedView_DOMDocument
    */
   public $currentDocument=null;
-  
-  /**
-   * Name of file currently being parsed
-   * 
-   * @var string
-   */
-  public $currentFile=null;
-  
 
   /**
    * Apply options.
@@ -57,7 +34,6 @@ class RedView_Core_Parser extends RedView_Core {
    * 		Options to apply.
    */
   public function applyOptions (RedView_Options $options=null) {
-    
     if (!$options) return;
     
     if (isset($options->view_path)) {
@@ -73,14 +49,10 @@ class RedView_Core_Parser extends RedView_Core {
    * 		path to file
    */
   public function parseFile ($file) {
-    $this->currentFile = $file;
-    // TODO: unused event
-    $event = $this->sendEvent('parseFile');
-    if ($event->isCanceled) return;
     
-    // if (!$file_exists) debug_print_backtrace();
     $text = file_get_contents($file);
     return $this->parseText($text);
+    
   }
 
   /**
@@ -93,8 +65,6 @@ class RedView_Core_Parser extends RedView_Core {
       
     $doc = new RedView_DOMDocument();
     
-    $doc->formatOutput = $this->formatOutput;
-    
     $doc->loadXML("$text");
     
     // remove doctype if present
@@ -102,30 +72,21 @@ class RedView_Core_Parser extends RedView_Core {
     
     $xpath = new DOMXpath($doc);
 
-    $list = $xpath->evaluate("//*");
-    $this->currentIndex=0;
+    $nodes = $xpath->evaluate("//*");
     
-    foreach ($list as $node) {
+    foreach ($nodes as $node) {
       $this->currentDocument = &$doc;
       $this->currentNode = &$node;
       $this->sendEvent('parseNode');
-      ++$this->currentIndex;
     }
 
-    $out = '';
-    if ($doc->childNodes) {
-      foreach ($doc->childNodes as $child) {
-        $out .= $doc->saveXHTML( $child );
-      }
-    }
+    $out = $doc->saveXHTML();
     
     $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
 
     return trim($out);
 
   }
-  
-  
 
 }
 
