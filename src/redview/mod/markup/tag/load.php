@@ -2,18 +2,17 @@
 
 class RedView_Mod_Markup_Tag_Load extends RedView_Mod_Markup_Tag {
   
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
     if ($this->attribs['view']) {
-      $dom  = $parser->currentDocument;
-      $node = $parser->currentNode;
-      $file = $parser->tools->cache->findLoader(trim($this->attribs['view'], '/').'.html');
+      $doc = $this->node->ownerDocument;
+      $file = $this->tools->cache->findLoader(trim($this->attribs['view'], '/').'.html');
       $params = array();
       // <load> can have parameters inside: <param name="..." value="..." />
       
       $objectParamString = "";
       
-      if ($node->childNodes) {
-        foreach ($node->childNodes as $child) if ($child->hasAttributes()) {
+      if ($this->node->childNodes) {
+        foreach ($this->node->childNodes as $child) if ($child->hasAttributes()) {
           $name = $child->getAttribute('name');
           $value = $child->getAttribute('value');
           $object = $child->getAttribute('object');
@@ -28,9 +27,9 @@ class RedView_Mod_Markup_Tag_Load extends RedView_Mod_Markup_Tag {
       }
       $paramString = var_export($params, true);
       
-      $pi   = $dom->createProcessingInstruction('php', 
+      $pi   = $doc->createProcessingInstruction('php', 
           "\$params=$paramString;$objectParamString require '$file';");
-      $node->parentNode->replaceChild($pi, $node);
+      $this->node->parentNode->replaceChild($pi, $this->node);
     }
   }
   

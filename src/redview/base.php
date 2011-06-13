@@ -8,9 +8,15 @@
 abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_IListener {
   
   /**
+   * @var RedView_Options $options
+   */
+  public $options;
+  
+  /**
    * @var RedView_Toolbox $tools
    */
   public $tools;
+  
   
   /**
    * Send an event.
@@ -52,6 +58,7 @@ abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_ILis
   public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
     if ($options) $this->applyOptions($options);
     $this->tools = $tools ? $tools : RedView::$tools;
+    $this->options = $options;
   }
 
   /**

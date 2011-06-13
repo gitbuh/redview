@@ -12,15 +12,13 @@ abstract class RedView_Mod_Markup_ClassTag extends RedView_Mod_Markup_Tag {
    */
   public $view;
 
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
     
     $class  = get_class($this);
     
     $atts = var_export($this->attribs, true);
   
-    $this->toPhp($parser->currentNode, 
-        "$class::open(\$this, '{$this->name}', $atts);", 
-        "$class::close();");
+    $this->toPhp("$class::open(\$this, '{$this->name}', $atts);", "$class::close();");
   }
   
   public static function open ($view, $name, $attribs) {

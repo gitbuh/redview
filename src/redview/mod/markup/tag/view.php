@@ -2,7 +2,7 @@
 
 class RedView_Mod_Markup_Tag_View extends RedView_Mod_Markup_Tag {
 
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
     
     $pi = null;
 
@@ -11,7 +11,7 @@ class RedView_Mod_Markup_Tag_View extends RedView_Mod_Markup_Tag {
     }
     $pi2 = "\$this->afterRender(); \$this->loadTemplate();";
 
-    $this->toPhp($parser->currentNode, $pi, $pi2);
+    $this->toPhp($pi, $pi2);
 
   }
 }

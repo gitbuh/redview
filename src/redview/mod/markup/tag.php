@@ -7,15 +7,23 @@
  *
  */
 abstract class RedView_Mod_Markup_Tag extends RedView_Base {
-
+  
   /**
-   Tag (node) name
-   @var string
+   * @var DOMNode
+   */
+  public $node;
+  
+  /**
+   * Tag (node) name
+   * 
+   * @var string
    */
   public $name;
+  
   /**
-   Tag attributes
-   @var array<string=>string>
+   * Tag attributes
+   * 
+   * @var array<string=>string>
    */
   public $attribs=array();
 
@@ -28,7 +36,9 @@ abstract class RedView_Mod_Markup_Tag extends RedView_Base {
    */
    public function fromNode(DOMNode $node) {
     
-    $this->name     = $node->nodeName;
+    $this->node = $node;
+    
+    $this->name = $node->nodeName;
     
     $this->attribs = array();
     if ($node->hasAttributes()) {
@@ -37,6 +47,7 @@ abstract class RedView_Mod_Markup_Tag extends RedView_Base {
       }
     }
     
+    
   }
   
   /**
@@ -44,7 +55,7 @@ abstract class RedView_Mod_Markup_Tag extends RedView_Base {
    *
    * @param RedView_Core_Parser $parser
    */
-  abstract public function markup (RedView_Core_Parser $parser);
+  abstract public function markup();
 
 
   /**
@@ -61,25 +72,30 @@ abstract class RedView_Mod_Markup_Tag extends RedView_Base {
    * @param string $closePi
    *        Optional closing PHP code.
    */
-  public function toPhp (DOMNode $node, $openPi=null, $closePi=null) {
+  public function toPhp ($openPi=null, $closePi=null) {
     
-    $doc = $node->ownerDocument;
+    $pi='';
+    $pi2='';
+    
     if ($openPi) {
-      $pi = $doc->createProcessingInstruction('php', " $openPi ");
-      $node->parentNode->insertBefore($pi, $node);
+      $pi = $this->node->ownerDocument->createProcessingInstruction('php', " $openPi ");
+      $this->node->parentNode->insertBefore($pi, $this->node);
     }
+    
     if ($closePi) {
-      $pi2 = $doc->createProcessingInstruction('php', " $closePi ");
+      $pi2 = $this->node->ownerDocument->createProcessingInstruction('php', " $closePi ");
     }
 
-    while ($node->childNodes->length) {
-      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
+    while ($this->node->childNodes->length) {
+      $this->node->parentNode->insertBefore($this->node->childNodes->item(0), $this->node);
     }
     
     if ($closePi) {
-      $node->parentNode->replaceChild($pi2, $node);
+      $this->node->parentNode->replaceChild($pi2, $this->node);
+    
     } else {
-      $node->parentNode->removeChild($node);
+
+      $this->node->parentNode->removeChild($this->node);
     }
     
   }

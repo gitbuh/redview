@@ -49,8 +49,9 @@ class RedView_Mod_Markup extends RedView_Mod {
 
     // tag does its thing.
     $tag = new $class();
+    $tag->setup($this->options, $this->tools);
     $tag->fromNode($node);
-    $tag->markup($parser);
+    $tag->markup();
 
     // cancel the event, the current node has probably been destroyed by now.
     $event->cancel();

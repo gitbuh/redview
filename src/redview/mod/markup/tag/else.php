@@ -2,9 +2,9 @@
 
 class RedView_Mod_Markup_Tag_Else extends RedView_Mod_Markup_Tag {
 
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
     
-    $this->toPhp($parser->currentNode, '} else {');
+    $this->toPhp('} else {');
     
   }
 

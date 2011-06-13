@@ -2,32 +2,31 @@
 
 class RedView_Mod_Markup_Tag_Format extends RedView_Mod_Markup_Tag {
 
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
 
-    $dom = $parser->currentDocument;
-    $node = $parser->currentNode;
+    $doc = $this->node->ownerDocument;
 
     // use the tag's 'value' attribute if present.
     if (isset($this->attribs['value'])) {
-      $pi = $dom->createProcessingInstruction('php', 
+      $pi = $doc->createProcessingInstruction('php', 
       		"echo \"{$this->attribs['value']}\"");
     }
     // otherwise use its inner xml content as a string.
     else {
-      $xpath = new DOMXpath($dom);
-      $list = $xpath->evaluate("node()", $node);
+      $xpath = new DOMXpath($doc);
+      $list = $xpath->evaluate("node()", $this->node);
       $xml='';
       foreach ($list as $child) {
         // TODO: HACK. 
-        $xml .= str_replace('&gt;', '>', $dom->saveXHTML($child));
+        $xml .= str_replace('&gt;', '>', $doc->saveXHTML($child));
       }
       if ($xml) {
-        $pi = $dom->createProcessingInstruction('php', 
+        $pi = $doc->createProcessingInstruction('php', 
         		"echo <<<RV_HEREDOC\n$xml\nRV_HEREDOC;\n");
       }
     }
     
-    $node->parentNode->replaceChild($pi, $node);
+    $this->node->parentNode->replaceChild($pi, $this->node);
   }
 
 }

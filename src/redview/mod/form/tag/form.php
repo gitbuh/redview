@@ -8,10 +8,9 @@ class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
   /**
       Put a node before this node when writing to cache
   */
-  public function markup (RedView_Core_Parser $parser) {
+  public function markup() {
     
-    $doc    = $parser->currentDocument;
-    $node   = $parser->currentNode;
+    $doc = $this->node->ownerDocument;
     
     if (!isset($this->attribs['action'])) return;
     
@@ -19,21 +18,21 @@ class RedView_Mod_Form_Tag_Form extends RedView_Mod_Markup_Tag {
     
     $a = $doc->createAttribute('method');
     $a->value = 'post';
-    $node->appendChild($a);
+    $this->node->appendChild($a);
     
     $a = $doc->createAttribute('enctype');
     $a->value = 'multipart/form-data';
-    $node->appendChild($a);
+    $this->node->appendChild($a);
     
     $a = $doc->createAttribute('action');
     $a->value = '.';
-    $node->appendChild($a);
+    $this->node->appendChild($a);
     
     $val = "RedView_Mod_Form::serializeCallbackObject(\$this, '$callback')";
     $pi = $doc->createProcessingInstruction('php', 
       "echo \"<div style='display:none'><input type='hidden' name='_rv:data' value='\".$val.\"' /></div>\"");
 
-    $node->appendChild($pi);
+    $this->node->appendChild($pi);
     
   }
   

@@ -100,9 +100,10 @@ class RedView_Mod_Form extends RedView_Mod {
         return;
     }
       
+    $tag->setup($this->options, $this->tools);
     $tag->fromNode($node);
     
-    $tag->markup($parser);
+    $tag->markup();
     
     $event->cancel();
 
