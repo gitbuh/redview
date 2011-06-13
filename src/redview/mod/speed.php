@@ -8,13 +8,6 @@
  *
  */
 class RedView_Mod_Speed extends RedView_Mod {
-  
-  /**
-   * Domain
-   * 
-   * @var string
-   */
-  public $domain = '';
 
   /**
    * Static subdomain index
@@ -31,6 +24,13 @@ class RedView_Mod_Speed extends RedView_Mod {
   public static $subdomainMax = 9;
   
   /**
+   * Subdomain prefix
+   * 
+   * @var string
+   */
+  public $subdomainPrefix = 's';
+  
+  /**
    * Initialize the plugin.
    *
    * @param RedView_Options $options
@@ -45,21 +45,6 @@ class RedView_Mod_Speed extends RedView_Mod {
 
     $this->listen('parseNode');
 
-  }
-  
-  
-  /**
-   * Apply options.
-   * 
-   * @param RedView_Options $options
-   *    Options to apply.
-   */
-  public function applyOptions (RedView_Options $options=null) {
-     
-    if (isset($options->app_domain)) {
-      $this->domain = $options->app_domain;
-    }
-    
   }
 
   /**
@@ -133,7 +118,7 @@ class RedView_Mod_Speed extends RedView_Mod {
       self::$subdomainIndex = 1;
     }
     
-    $url = 'http://s' . self::$subdomainIndex . '.' . $this->domain . $url;
+    $url = 'http://' . $this->subdomainPrefix . self::$subdomainIndex . '.' . $_SERVER['SERVER_NAME'] . $url;
     
     $node->setAttribute($attrib, $url);
     
