@@ -8,13 +8,6 @@
  *
  */
 class RedView_Mod_Speed extends RedView_Mod {
-
-  /**
-   * Static content path
-   *
-   * @var string
-   */
-  public $path = '../web';
   
   /**
    * Domain
@@ -63,13 +56,10 @@ class RedView_Mod_Speed extends RedView_Mod {
    */
   public function applyOptions (RedView_Options $options=null) {
      
-    if (isset($options->static_content_path)) {
-      $this->path = $options->static_content_path;
-    }
-  
     if (isset($options->app_domain)) {
       $this->domain = $options->app_domain;
     }
+    
   }
 
   /**
@@ -106,7 +96,7 @@ class RedView_Mod_Speed extends RedView_Mod {
     // only works on local images not containing query strings
     if ($src{0} != '/' || strpos($src, '?')) return;
 
-    list ($width, $height, $type, $attr) = getimagesize($this->path.$src);
+    list ($width, $height, $type, $attr) = getimagesize($_SERVER['DOCUMENT_ROOT'].$src);
 
     if (!($width && $height)) return;
 
