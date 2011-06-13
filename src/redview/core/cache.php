@@ -26,6 +26,12 @@ class RedView_Core_Cache extends RedView_Core {
    * @var string
    */
   public $defaultView = 'RedView_View';
+  /**
+   * Text being written to cache (for onCache event).
+   * 
+   * @var string
+   */
+  public $output = '';
 
   /**
    * Apply options.
@@ -79,7 +85,9 @@ class RedView_Core_Cache extends RedView_Core {
     $loader   = "$cache.loader.php";
     if (!$this->cacheOn || !file_exists($loader) || filemtime($loader)<filemtime($file)) {
       if (!file_exists($cachedir)) mkdir($cachedir);
-      file_put_contents("$cache.php", $this->tools->parser->parseFile($realFile));
+      $this->output = $this->tools->parser->parseFile($realFile);
+      $this->sendEvent('onCache');
+      file_put_contents("$cache.php", $this->output);
       $this->writeLoader($cache, $realFile);
     }
     return $loader;

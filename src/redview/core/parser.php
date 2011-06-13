@@ -71,7 +71,6 @@ class RedView_Core_Parser extends RedView_Core {
     if ($doc->doctype) $doc->removeChild($doc->doctype);
     
     $xpath = new DOMXpath($doc);
-
     $nodes = $xpath->evaluate("//*");
     
     foreach ($nodes as $node) {

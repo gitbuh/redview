@@ -11,6 +11,8 @@ class RedView_Core_Router extends RedView_Core {
   public $args;
   
   public $output='';
+  
+  public $requestUrl='';
 
   /**
    * Apply options.
@@ -39,25 +41,27 @@ class RedView_Core_Router extends RedView_Core {
    */
   public function loadPage() {
 
-    $this->sendEvent('beforePageLoad');
+    if (!isset($_REQUEST['_rv:page'])) $_REQUEST['_rv:page']="";
+    
+    $this->requestUrl = $_REQUEST['_rv:page'];
+    
+    $this->sendEvent('onRequest');
 
     $defaultPage=$this->defaultPage.'/';
     $pagePath=$this->pagePath;
     $viewPath=$this->viewPath;
 
-    if (!isset($_REQUEST['_rv:page'])) $_REQUEST['_rv:page']="";
+    if (trim($this->requestUrl,'/').'/' == $defaultPage) $this->redirect('', true);
 
-    if (trim($_REQUEST['_rv:page'],'/').'/' == $defaultPage) $this->redirect('', true);
-
-    if (!$_REQUEST['_rv:page']) $_REQUEST['_rv:page']=$defaultPage;
+    if (!$this->requestUrl) $this->requestUrl=$defaultPage;
 
     // make sure the URL ends in a slash, otherwise form posts won't work right
-    if ($_REQUEST['_rv:page']{strlen($_REQUEST['_rv:page'])-1}!='/') {
-      $this->redirect($_REQUEST['_rv:page'].'/', true);
+    if ($this->requestUrl{strlen($this->requestUrl)-1}!='/') {
+      $this->redirect($this->requestUrl.'/', true);
     }
 
     // the entire URL after site root (where index.php lives) is in $_REQUEST['page']
-    $page = trim($_REQUEST['_rv:page'],'/');
+    $page = trim($this->requestUrl,'/');
 
     $path;
 
@@ -80,9 +84,8 @@ class RedView_Core_Router extends RedView_Core {
     if (!$path || !file_exists("$viewPath/$path")) $this->redirect($defaultPage, true);
 
     // make argv
-    $args=explode('/', trim(substr($_REQUEST['_rv:page'], strlen($page)), '/'));
+    $args=explode('/', trim(substr($this->requestUrl, strlen($page)), '/'));
     $args[0] ? array_unshift($args, $page) : $args[0]=$page;
-    $_REQUEST['_rv:argv'] = $args;
 
     $this->args = $args;
 

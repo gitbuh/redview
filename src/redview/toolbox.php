@@ -40,9 +40,9 @@ class RedView_Toolbox {
   /**
    * Toolbox constructor
    * 
-   * @param array $options
+   * @param RedView_Options $options
    */
-  public function __construct ($options=array()) {
+  public function __construct (RedView_Options $options=null) {
   
     $this->cache  = new RedView_Core_Cache();
     $this->mods   = new RedView_Core_Mods();

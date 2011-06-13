@@ -6,7 +6,7 @@
  */
 class RedView_Mod extends RedView_Base {
   
-  public function __construct ($options=array(), RedView_Toolbox $tools=null) {
+  public function __construct (RedView_Options $options=null, RedView_Toolbox $tools=null) {
     $this->setup($options, $tools);
   }
   
@@ -19,7 +19,7 @@ class RedView_Mod extends RedView_Base {
    * @param RedView_Toolbox $tools 
    * 		optional custom tools
    */
-  public function setup ($options=array(), RedView_Toolbox $tools=null) {
+  public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
     parent::setup($options, $tools);
     $this->tools->mods->set(get_class($this), $this);
   }

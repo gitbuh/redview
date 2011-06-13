@@ -29,6 +29,7 @@ class RedView_DOMDocument extends DOMDocument {
     if (!$node) $node = $this->firstChild;
     
     $doc = new DOMDocument('1.0');
+    
     $clone = $doc->importNode($node->cloneNode(false), true);
     $term = in_array(strtolower($clone->nodeName), $this->selfTerminate);
     $inner='';

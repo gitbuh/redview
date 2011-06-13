@@ -5,17 +5,17 @@
  *
  */
 class RedView_Mod_Markup extends RedView_Mod {
-
+  
   /**
    * Initialize the plugin.
    *
-   * @param array $options
-   *   		optional options
+   * @param RedView_Options $options
+   *      optional options
    *
    * @param RedView_Toolbox $tools
-   * 		optional custom tools
+   *    optional custom tools
    */
-  public function setup ($options=array(), RedView_Toolbox $tools=null) {
+  public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
 
     parent::setup($options, $tools);
 

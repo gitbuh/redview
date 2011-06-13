@@ -39,19 +39,18 @@ abstract class RedView_Base implements RedView_Event_ISender, RedView_Event_ILis
     $callbackMethod = array($this, $callbackName);
     return $this->tools->events->register($eventName, $callbackMethod);
   }
-
+  
   /**
    * Set up the object.
-   * 
-   * @param array $options
-   *   		optional options
-   *   
-   * @param RedView_Toolbox $tools 
-   * 		optional custom tools
+   *
+   * @param RedView_Options $options
+   *      optional options
+   *
+   * @param RedView_Toolbox $tools
+   *    optional custom tools
    */
-  public function setup ($options=array(), RedView_Toolbox $tools=null) {
-    if (!$options) $options = array();
-    $this->applyOptions($options);
+  public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
+    if ($options) $this->applyOptions($options);
     $this->tools = $tools ? $tools : RedView::$tools;
   }
 

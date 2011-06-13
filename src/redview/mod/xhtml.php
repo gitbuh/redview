@@ -1,26 +1,26 @@
 <?php
 /**
  *
- * Xhtml plugin.
+ * Xhtml plugin. Help make cached files xhtml-firendly.
  *
  */
 class RedView_Mod_Xhtml extends RedView_Mod {
-
+  
   /**
    * Initialize the plugin.
    *
-   * @param array $options
-   *   		optional options
+   * @param RedView_Options $options
+   *      optional options
    *
    * @param RedView_Toolbox $tools
-   * 		optional custom tools
+   *    optional custom tools
    */
-  public function setup ($options=array(), RedView_Toolbox $tools=null) {
+  public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
 
     parent::setup($options, $tools);
 
     $this->listen('parseNode');
-    $this->listen('onFilter');
+    $this->listen('onCache');
 
   }
 
@@ -54,22 +54,27 @@ class RedView_Mod_Xhtml extends RedView_Mod {
         $node->setAttribute('alt', '');
       }
     }
-    return;
 
   }
 
   /**
-   * onFilter
+   * onCache
    *
-   * Event handler for onFilter events.
+   * Event handler for onCache events.
    *
    * @param RedView_Event $event
    * 		Event object
    */
-  public function onFilter(RedView_Event $event) {
-    $event->sender->output = '<?xml version="1.0"?>'
-    ."\n".'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-    ."\n".trim($event->sender->output);
+  public function onCache(RedView_Event $event) {
+    
+    // remove xmlns:r
+    $event->sender->output = preg_replace('/\s*xmlns:r="[^"]*"/', '', $event->sender->output);
+    
+    // add doctype to files beginning with '<html'
+    if (strtolower(substr($event->sender->output, 0, 5)) != '<html') return;
+    $event->sender->output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+        ."\n".$event->sender->output;
+        
   }
 
 }

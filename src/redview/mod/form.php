@@ -26,13 +26,13 @@ class RedView_Mod_Form extends RedView_Mod {
   /**
    * Initialize the plugin.
    *
-   * @param array $options
+   * @param RedView_Options $options
    *   		optional options
    *
    * @param RedView_Toolbox $tools
    * 		optional custom tools
    */
-  public function setup ($options=array(), RedView_Toolbox $tools=null) {
+  public function setup (RedView_Options $options=null, RedView_Toolbox $tools=null) {
 
     parent::setup($options, $tools);
 
@@ -44,19 +44,19 @@ class RedView_Mod_Form extends RedView_Mod {
   /**
    * Apply options.
    * 
-   * @param array $options
+   * @param RedView_Options $options
    * 		Options to apply.
    */
-  public function applyOptions ($options=array()) {
+  public function applyOptions (RedView_Options $options=null) {
   
-    if (isset($options['mod_form_ttl'])) {
-      $this->ttl = $options['mod_form_ttl'];
+    if (isset($options->mod_form_ttl)) {
+      $this->ttl = $options->mod_form_ttl;
     }
-    if (isset($options['mod_form_crypto_enabled'])) {
-      $this->useEncryption = $options['mod_form_crypto_enabled'];
+    if (isset($options->mod_form_crypto_enabled)) {
+      $this->useEncryption = $options->mod_form_crypto_enabled;
     }
-    if (isset($options['mod_form_crypto_password'])) {
-      $this->password = $options['mod_form_crypto_password'];
+    if (isset($options->mod_form_crypto_password)) {
+      $this->password = $options->mod_form_crypto_password;
     }
     
   }
