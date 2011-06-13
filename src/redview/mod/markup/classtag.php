@@ -13,33 +13,14 @@ abstract class RedView_Mod_Markup_ClassTag extends RedView_Mod_Markup_Tag {
   public $view;
 
   public function markup (RedView_Core_Parser $parser) {
-
-    $dom    = $parser->currentDocument;
-    $node   = $parser->currentNode;
+    
     $class  = get_class($this);
+    
+    $atts = var_export($this->attribs, true);
   
-    $attributes = array();
-    if ($node->hasAttributes()) {
-      foreach ($node->attributes as $attribute) {
-        $attributes[$attribute->name] = $attribute->value;
-      }
-    }
-    
-    $atts   = var_export($this->attribs, true);
-    
-    $pi = $dom->createProcessingInstruction('php', 
-			"$class::open(\$this, '{$this->name}', $atts);");
-    
-    $pi2 = $dom->createProcessingInstruction('php',
-			"$class::close();");
-  
-    $node->parentNode->insertBefore($pi, $node);
-
-    while ($node->childNodes->length) {
-      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
-    }
-    
-    $node->parentNode->replaceChild($pi2, $node);
+    $this->toPhp($parser->currentNode, 
+        "$class::open(\$this, '{$this->name}', $atts);", 
+        "$class::close();");
   }
   
   public static function open ($view, $name, $attribs) {

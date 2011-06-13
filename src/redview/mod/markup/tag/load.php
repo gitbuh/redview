@@ -28,7 +28,6 @@ class RedView_Mod_Markup_Tag_Load extends RedView_Mod_Markup_Tag {
       }
       $paramString = var_export($params, true);
       
-      
       $pi   = $dom->createProcessingInstruction('php', 
           "\$params=$paramString;$objectParamString require '$file';");
       $node->parentNode->replaceChild($pi, $node);

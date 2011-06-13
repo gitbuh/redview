@@ -7,8 +7,6 @@ class RedView_Mod_Markup_Tag_Slot extends RedView_Mod_Markup_Tag {
 
   public function markup (RedView_Core_Parser $parser) {
 
-    $doc = $parser->currentDocument;
-    $node = $parser->currentNode;
     $get = "";
     $set = "";
     $pi = null;
@@ -19,29 +17,14 @@ class RedView_Mod_Markup_Tag_Slot extends RedView_Mod_Markup_Tag {
     
     if ($get) {
       $slot = "RedView::\$slots[\"$get\"]";
-      $pi = $doc->createProcessingInstruction('php',
-        		"if (isset($slot)) echo $slot");
+      $pi = "if (isset($slot)) echo $slot";
     }
     elseif ($set) {
-      $pi = $doc->createProcessingInstruction('php',
-          		"ob_start(); ".__CLASS__."::\$names[]='$set';");
-
-      $pi2 = $doc->createProcessingInstruction('php',
-          		"RedView::\$slots[array_pop(".__CLASS__."::\$names)]=ob_get_clean();");
+      $pi = "ob_start(); ".__CLASS__."::\$names[]='$set';";
+      $pi2 = "RedView::\$slots[array_pop(".__CLASS__."::\$names)]=ob_get_clean();";
     }
 
-    $node->parentNode->insertBefore($pi, $node);
-
-    while ($node->childNodes->length) {
-      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
-    }
-
-    if ($pi2) {
-      $node->parentNode->replaceChild($pi2, $node);
-    }
-    else {
-      $node->parentNode->removeChild($node);
-    }
+    $this->toPhp($parser->currentNode, $pi, $pi2);
 
   }
 }

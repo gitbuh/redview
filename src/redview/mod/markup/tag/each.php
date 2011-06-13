@@ -7,28 +7,14 @@ class RedView_Mod_Markup_Tag_Each extends RedView_Mod_Markup_Tag {
     $dom = $parser->currentDocument;
     $node = $parser->currentNode;
 
-    $in=$this->attribs['in'];
-    $k=$this->attribs['key'];
-    $v=$this->attribs['value'];
-    
-    $pi;
-    if (!$k) {
-      $pi = $dom->createProcessingInstruction('php', 
-    		"foreach ($in as $v) { ");
-    } else {
-      $pi = $dom->createProcessingInstruction('php', 
-      		"foreach ($in as $k=>$v) { ");
-    }
-    
-    $pi2 = $dom->createProcessingInstruction('php', " } ");
+    $in = $this->attribs['in'];
+    $k  = $this->attribs['key'];
+    $v  = $this->attribs['value'];
   
-    $node->parentNode->insertBefore($pi, $node);
-
-    while ($node->childNodes->length) {
-      $node->parentNode->insertBefore($node->childNodes->item(0), $node);
-    }
-
-    $node->parentNode->replaceChild($pi2, $node);
+    $pi = $k ? "foreach ($in as $k=>$v) {" : "foreach ($in as $v) {";
+    
+    $this->toPhp($parser->currentNode, $pi, '}');
+    
   }
 
 }
