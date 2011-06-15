@@ -24,6 +24,13 @@ class RedView_Mod_Speed extends RedView_Mod {
   public static $subdomainMax = 9;
   
   /**
+   * Relinked links
+   * 
+   * @var array
+   */
+  public static $links = array();
+  
+  /**
    * Subdomain prefix
    * 
    * @var string
@@ -114,13 +121,20 @@ class RedView_Mod_Speed extends RedView_Mod {
     // only works on local urls
     if ($url{0} != '/') return;
     
+    if (isset(self::$links[$url])) {
+      $node->setAttribute($attrib, self::$links[$url]);
+      return;
+    }
+    
     if (++self::$subdomainIndex > self::$subdomainMax) {
       self::$subdomainIndex = 1;
     }
     
-    $url = 'http://' . $this->subdomainPrefix . self::$subdomainIndex . '.' . $_SERVER['SERVER_NAME'] . $url;
+    $newUrl = 'http://' . $this->subdomainPrefix . self::$subdomainIndex . '.' . $_SERVER['SERVER_NAME'] . $url;
     
-    $node->setAttribute($attrib, $url);
+    self::$links[$url] = $newUrl;
+    
+    $node->setAttribute($attrib, $newUrl);
     
   }
 

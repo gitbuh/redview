@@ -64,13 +64,33 @@ class RedView_Core_Parser extends RedView_Core {
   public function parseText ($text) {
       
     $doc = new RedView_DOMDocument();
-    
+    $doc->preserveWhiteSpace = false;
     $doc->loadXML("$text");
     
     // remove doctype if present
     if ($doc->doctype) $doc->removeChild($doc->doctype);
     
     $xpath = new DOMXpath($doc);
+    
+    // remove comments
+    
+    $commentNodes = $xpath->evaluate("//comment()");
+  
+    foreach ($commentNodes as $node) {
+      $node->parentNode->removeChild($node);
+    }
+    
+    // trim whitespace on text nodes
+    
+    $textNodes = $xpath->evaluate("//text()");
+    
+    foreach ($textNodes as $node) {
+      $node->data = preg_replace("/\s+$/", " ", $node->data);
+      $node->data = preg_replace("/^\s+/", " ", $node->data);
+    }
+    
+    // fire parseNode event on all nodes
+     
     $nodes = $xpath->evaluate("//*");
     
     foreach ($nodes as $node) {
