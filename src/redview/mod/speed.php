@@ -86,7 +86,7 @@ class RedView_Mod_Speed extends RedView_Mod {
     $src = $node->getAttribute('src');
 
     // only works on local images not containing query strings
-    if ($src{0} != '/' || strpos($src, '?')) return;
+    if (!$src || $src{0} != '/' || strpos($src, '?')) return;
 
     list ($width, $height, $type, $attr) = getimagesize($_SERVER['DOCUMENT_ROOT'].$src);
 
@@ -119,7 +119,7 @@ class RedView_Mod_Speed extends RedView_Mod {
     $url = $node->getAttribute($attrib);
     
     // only works on local urls
-    if ($url{0} != '/') return;
+    if (!$url || $url{0} != '/') return;
     
     if (isset(self::$links[$url])) {
       $node->setAttribute($attrib, self::$links[$url]);
