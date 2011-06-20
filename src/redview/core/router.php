@@ -130,7 +130,7 @@ class RedView_Core_Router extends RedView_Core {
 
     if (!strpos($url, '://')) {
       $url = trim($url,'/');
-      $url = $this->getUrlBase().$url.($url?'/':'');
+      $url = $this->getUrlBase().'/'.$url.($url?'/':'');
     }
     if ($permanent) header("HTTP/1.1 301 Moved Permanently");
     header("Location: $url");
@@ -171,8 +171,8 @@ class RedView_Core_Router extends RedView_Core {
     return 'http'
     .  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's' : '')
     .  '://'.$_SERVER['SERVER_NAME']
-    .  ($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '')
-    .  $this->getUrlSub();
+    .  ($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '');
+    // .  $this->getUrlSub();
   }
 
   public function getUrlSub() {
