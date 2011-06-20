@@ -13,7 +13,7 @@ class RedView_Mod_Form extends RedView_Mod {
    * 
    * @var int
    */
-  public static $ttl=300;
+  public static $ttl=3600;
   
   
   /**
@@ -133,18 +133,18 @@ class RedView_Mod_Form extends RedView_Mod {
     list ($view, $method, $session, $expire) = $a;
     
     if (($session != $sid) || ($expire < time())) {
-      $this->end(); 
+      $this->tools->router->end(); 
     }
     try {
       $c = new ReflectionClass($view); 
       $m = new ReflectionMethod($view, $method); 
     }
     catch (ReflectionException $e) { 
-      $this->end(); 
+      $this->tools->router->end(); 
     }
       
     if (!($m->isPublic() && !$m->isStatic() && $c->isSubclassOf('RedView_View'))) {
-      $this->end();
+      $this->tools->router->end(); 
     }
     
     $class = get_class($view);
@@ -207,7 +207,6 @@ class RedView_Mod_Form extends RedView_Mod {
    */
   public static function decrypt ($text, $initVector) {
     $out = openssl_decrypt($text, 'DES3', self::$password, false, $initVector);
-    error_log('deserialized: ' . $out);
     return $out;
   }
   

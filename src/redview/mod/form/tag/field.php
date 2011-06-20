@@ -28,7 +28,8 @@ class RedView_Mod_Form_Tag_Field extends RedView_Mod_Markup_ClassTag {
       $selfclose=false;
     }
 
-    if (isset ($_SESSION['_rv']['fields'][$viewClass][$attribs['name']])) {
+    if (isset ($_SESSION['_rv']['fields'][$viewClass][$attribs['name']]) &&
+        (!isset ($attribs['type']) || $attribs['type'] != 'password')) {
       $attribs['value']=$_SESSION['_rv']['fields'][$viewClass][$attribs['name']];
     }
 

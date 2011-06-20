@@ -13,6 +13,8 @@ class RedView_Core_Router extends RedView_Core {
   public $output='';
   
   public $requestUrl='';
+  
+  public $state;
 
   /**
    * Apply options.
@@ -40,6 +42,8 @@ class RedView_Core_Router extends RedView_Core {
    base URL of current site
    */
   public function loadPage() {
+  
+    $this->state = RedView::STATE_PRELOAD;
 
     if (!isset($_REQUEST['_rv:page'])) $_REQUEST['_rv:page']="";
     
@@ -90,6 +94,8 @@ class RedView_Core_Router extends RedView_Core {
     $this->args = $args;
 
     $this->sendEvent('onPageLoad');
+    
+    $this->state = RedView::STATE_LOAD;
 
     // Load the cached view/controller
     ob_start();
@@ -146,8 +152,12 @@ class RedView_Core_Router extends RedView_Core {
    */
   public function end ($slot=null, $value='') {
     if ($slot) RedView::setSlot($slot, $value);
-    $path = trim(implode('/', $this->args), '/');
-    $this->redirect("/$path/");
+    if ($this->state == RedView::STATE_PRELOAD) {
+      $path = trim(implode('/', $this->args), '/');
+      $this->redirect("/$path/");
+    } else {
+      $this->redirect("/");
+    }
   }
 
   /**

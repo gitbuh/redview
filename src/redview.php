@@ -8,6 +8,9 @@ spl_autoload_register(function($class){return spl_autoload(str_replace('_', '/',
 */
 class RedView extends RedView_View {
 
+  const STATE_PRELOAD  = 1;
+  const STATE_LOAD     = 2;
+
  /**
   * @var RedView_Toolbox $tools
   */
