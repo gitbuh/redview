@@ -130,7 +130,7 @@ class RedView_Core_Router extends RedView_Core {
 
     if (!strpos($url, '://')) {
       $url = trim($url,'/');
-      $url = $this->getUrlBase().'/'.$url.($url?'/':'');
+      $url = $this->getUrlBase().$url.($url?'/':'');
     }
     if ($permanent) header("HTTP/1.1 301 Moved Permanently");
     header("Location: $url");
@@ -171,33 +171,13 @@ class RedView_Core_Router extends RedView_Core {
     return 'http'
     .  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's' : '')
     .  '://'.$_SERVER['SERVER_NAME']
-    .  ($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '');
+    .  ($_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '')
+    .  $this->getUrlSub();
   }
 
-  /**
-   * Get URL path
-   *
-   * @return string
-   * 		path of current url (as shown in browser)
-   */
-  public function getUrlPath() {
-    return $this->getUrlBase().$this->getPathFromString($_SERVER['REQUEST_URI']);
-  }
-
-  /**
-   * Get script path
-   *
-   * @return string
-   * 		path of current script (before any url rewriting)
-   */
-  public function getScriptPath() {
-    return $this->getUrlBase().$this->getPathFromString($_SERVER['SCRIPT_NAME']);
-  }
-
-
-  protected function getPathFromString($file) {
-    preg_match_all('/.*\//', $file, $match, PREG_PATTERN_ORDER);
-    return $match[0][0];
+  public function getUrlSub() {
+    if (!isset($_REQUEST['_rv:page']) || !$_REQUEST['_rv:page']) return $_SERVER['REQUEST_URI'];
+    return substr($_SERVER['REQUEST_URI'], 0 , -strlen($_REQUEST['_rv:page']));
   }
 
 }
