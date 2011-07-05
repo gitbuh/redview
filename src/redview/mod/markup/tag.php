@@ -78,12 +78,12 @@ abstract class RedView_Mod_Markup_Tag extends RedView_Base {
     $pi2='';
     
     if ($openPi) {
-      $pi = $this->node->ownerDocument->createProcessingInstruction('php', " $openPi ");
+      $pi = $this->node->ownerDocument->createProcessingInstruction('php', trim($openPi) . ' ');
       $this->node->parentNode->insertBefore($pi, $this->node);
     }
     
     if ($closePi) {
-      $pi2 = $this->node->ownerDocument->createProcessingInstruction('php', " $closePi ");
+      $pi2 = $this->node->ownerDocument->createProcessingInstruction('php', trim($closePi) . ' ');
     }
 
     while ($this->node->childNodes->length) {

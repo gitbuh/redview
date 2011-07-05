@@ -105,8 +105,8 @@ class RedView_Core_Parser extends RedView_Core {
         $out .= $doc->saveXHTML( $child );
       }
     }
-    
-    $out = preg_replace('/\?>(\s*)<\?php/', " ?>\n<?php ", $out);
+     
+    $out = preg_replace('/\?>(\s*)<\?php/', "?>\n<?php", $out);
 
     return trim($out);
 

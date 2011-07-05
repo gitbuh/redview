@@ -72,14 +72,14 @@
 			example:
 	</b></p>
 	<li>
-			&lt;r:load file="widget/login" /&gt;
+			&lt;r:load view="widget/login" /&gt;
 	</li>
 -->
 <!ELEMENT r:load ( r:param )* >
 
 
 <!ATTLIST r:load
-	file CDATA #REQUIRED
+	view CDATA #REQUIRED
 	>
 	
 <!-- 
