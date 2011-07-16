@@ -7,7 +7,7 @@
 			example:
 	</b></p>
 	<li>
-			&lt;r:view xmlns:r="RedView" template="template/master.html"&gt;
+			&lt;r:view xmlns:r="RedView" template="template/master"&gt;
 				...
 			&lt;/r:view&gt;
 	</li>
