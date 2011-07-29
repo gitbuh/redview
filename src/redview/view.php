@@ -41,10 +41,9 @@ class RedView_View {
    * 
    */
   public function loadTemplate ($template=null) {
-    $cache=null;
     if (!$template) $template=$this->template;
-    if ($template) $cache = RedView::load("$template.html");
-    if ($cache) require $cache;
+    // TODO: use toolbox?
+    if ($template) RedView::load($template);
   }
 
   public function includeFile ($file) {

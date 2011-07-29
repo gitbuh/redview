@@ -66,11 +66,14 @@ class RedView_Mod_Xhtml extends RedView_Mod {
    * 		Event object
    */
   public function onCache(RedView_Event $event) {
-    
     // remove xmlns:r
     $event->sender->output = preg_replace('/\s*xmlns:r="[^"]*"/', '', $event->sender->output);
     
-    // add doctype to files beginning with '<html'
+    // Add doctype to files beginning with '<html'
+    
+    // TODO: This wont work if <html is not the first thing in cached document...
+    // Any php and most r: tags before html tag will cause this to fail.
+    // Nesting html tag inside r:view works as expected, though.
     if (strtolower(substr($event->sender->output, 0, 5)) != '<html') return;
     $event->sender->output = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
         ."\n".$event->sender->output;

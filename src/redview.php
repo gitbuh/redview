@@ -120,8 +120,8 @@ class RedView extends RedView_View {
     return self::$tools->router->end($k, $v);
   }
   
-  public static function load ($file) {
-    self::$tools->cache->load($file);
+  public static function load ($view) {
+    self::$tools->cache->load($view);
   }
   
   public static function toXml ($string) { 

@@ -77,6 +77,7 @@ class RedView_Core_Router extends RedView_Core {
       $lastPage = $page;
       if (strpos($page,'..')===false && file_exists("$viewPath/$pagePath/$page.html")) {
         $path =  "$pagePath/$page.html";
+        $view = "$pagePath/$page";
         break;
       }
       $a = explode('/', $page);
@@ -99,7 +100,7 @@ class RedView_Core_Router extends RedView_Core {
 
     // Load the cached view/controller
     ob_start();
-    echo $this->tools->cache->load($path);
+    echo $this->tools->cache->load($view);
     $out=ob_get_clean();
 
     $this->output = &$out;

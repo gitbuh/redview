@@ -58,10 +58,11 @@ class RedView_Core_Cache extends RedView_Core {
   /**
    * Load a cached view/controller.
    *
-   * @param string $file 
-   * 		path to the file to load.
+   * @param string $view
+   * 		path to the view to load.
    */
-  public function load ($file) {
+  public function load ($view) {
+    $file = "$view.html";
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots']) && is_array($_SESSION['_rv']['slots'])) {
       foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView::$slots[$k] = $v;
     }
