@@ -68,7 +68,8 @@ class RedView_Mod_Speed extends RedView_Mod {
     $node     = $parser->currentNode;
 
     $this->setImageDimensions($node);
-    $this->useStaticUrl($node);
+    
+    if (!$_SERVER['HTTPS']) $this->useStaticUrl($node);
 
   }
 
