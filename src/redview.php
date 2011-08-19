@@ -21,6 +21,7 @@ class RedView extends RedView_View {
    */
   public static $slots=array();
   
+  public static $test=0;
   /** 
       init
       
@@ -39,7 +40,7 @@ class RedView extends RedView_View {
    * @return RedView_Toolbox
    */
   public static function setup ($options=array(), RedView_Toolbox $tools=null) {
-    session_start();
+    if (!isset ($_COOKIE[ini_get('session.name')])) session_start();
     self::$tools = $tools ? $tools : new RedView_Toolbox($options);
     return self::$tools;
   }
@@ -70,7 +71,7 @@ class RedView extends RedView_View {
   */
   public static function args ($index=-1) {
     $args = self::$tools->router->args;
-    return $index>-1 ? $args[$index] : $args;
+    return $index>-1 ? (isset ($args[$index]) ? $args[$index] : null ) : $args;
   }
   
   /** 
