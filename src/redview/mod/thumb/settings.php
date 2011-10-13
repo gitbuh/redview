@@ -12,6 +12,8 @@ class RedView_Mod_Thumb_Settings {
   
   public $source;
   
+  public $mask;
+  
   public function __construct($p1, $p2=null) {
     if ($p2) $this->fromPath($p1, $p2);
     else $this->fromNode($p1);
@@ -23,6 +25,7 @@ class RedView_Mod_Thumb_Settings {
     $this->clamp = $node->getAttribute('clamp');
     $this->desaturate = $node->getAttribute('desaturate');
     $this->source = $node->getAttribute('src');
+    $this->mask = $node->getAttribute('mask');
   }
   
   public function fromPath ($thumbPath, $path) {
@@ -49,6 +52,9 @@ class RedView_Mod_Thumb_Settings {
         case 'd': 
           $this->desaturate = $v;
           break;
+        case 'm': 
+          $this->mask = str_replace('|', '/', $v);
+          break;
       }
     }
     
@@ -59,6 +65,7 @@ class RedView_Mod_Thumb_Settings {
             'w_' . $this->width . '-h_' . $this->height .
             ($this->clamp ? '-c_' . $this->clamp : '') .
             ($this->desaturate ? '-d_' . $this->desaturate : '') . 
+            ($this->mask ? '-m_' . str_replace('/', '|', $this->mask) : '') . 
             // TODO: put slash here?
             $this->source;
   }

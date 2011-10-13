@@ -45,13 +45,22 @@ class RedView extends RedView_View {
     return self::$tools;
   }
   
-/**
- * Go
- * 
- * Start the RedView page lifecycle.
- */
+ /**
+  * Go
+  * 
+  * Start the RedView page lifecycle.
+  */
   public static function go () {
     self::$tools->router->loadPage();
+  }
+  
+ /**
+  * On
+  *
+  * Hook up an event listener.
+  */
+  public static function on ($eventName, $callback) {
+    self::$tools->events->register($eventName, $callback);
   }
   
   /** 
