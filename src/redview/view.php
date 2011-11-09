@@ -79,6 +79,9 @@ class RedView_View {
     $this->__construct();
     $this->unserialize();
   }
+  
+  // passthrough
+  protected function ev ($x) { return $x; }
 
 }
 
