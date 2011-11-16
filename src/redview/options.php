@@ -11,7 +11,7 @@ class RedView_Options {
 
 // Turn this on during production.
 
-  public $cache_enabled     = false;
+  public $cache_enabled     = true;
 
 // RedView needs to store cache files somewhere.
 // Somewhere in /tmp/ makes sense during development.

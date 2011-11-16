@@ -150,25 +150,41 @@ class RedView_Mod_Thumb extends RedView_Mod {
       $def_height = $height / $factor_w;
     }
     
+    $adj_width = $def_width;
+    $adj_height = $def_height;
+    
     // Scale to fit w/ Aspect Ratio
     if($fitToScale) {
       if ($def_height > $def_width) {
-        $def_height = $height / ($width / $def_width);
+        $adj_height = $height / ($width / $def_width);
       }
       else {
-        $def_width = $width / ($height / $def_height);
+        $adj_width = $width / ($height / $def_height);
       }
     }
+    
+    if ($adj_width > $def_width) {
+    	$scale = $def_width / $adj_width;
+    	$adj_width = $def_width;
+    	$adj_height *= $scale;
+    }
+    if ($adj_height > $def_height) {
+    	$scale = $def_height / $adj_height;
+    	$adj_height = $def_height;
+    	$adj_width *= $scale;
+    }
+    
 
-    $factor_w = $width / $def_width;
-    $factor_h = $height / $def_height;
+    $factor_w = $width / $adj_width;
+    $factor_h = $height / $adj_height;
 
+    
     if ($factor_w > $factor_h) {
-      $new_height = floor($def_height * $factor_h);
-      $new_width = floor($def_width  * $factor_h);
+      $new_height = floor($adj_height * $factor_h);
+      $new_width = floor($adj_width  * $factor_h);
     } else {
-      $new_height = floor($def_height * $factor_w);
-      $new_width = floor($def_width  * $factor_w);
+      $new_height = floor($adj_height * $factor_w);
+      $new_width = floor($adj_width  * $factor_w);
     }
     
 
@@ -178,14 +194,14 @@ class RedView_Mod_Thumb extends RedView_Mod {
     $src_x = ceil(($width  - $new_width)  * ($clamp[0] / 100));
     $src_y = ceil(($height - $new_height) * ($clamp[1] / 100));
 
-    $dst = ImageCreateTrueColor($def_width, $def_height);
+    $dst = ImageCreateTrueColor($adj_width, $adj_height);
     
     imagesavealpha($dst, true);
     $trans_colour = imagecolorallocatealpha($dst, 0, 0, 0, 127);
     imagefill($dst, 0, 0, $trans_colour);
     
     @imagecopyresampled($dst, $src, 0, 0, $src_x, $src_y,
-        $def_width, $def_height, $new_width, $new_height);
+        $adj_width, $adj_height, $new_width, $new_height);
 
     if ($desaturate) {
       imagefilter($dst, IMG_FILTER_GRAYSCALE); 

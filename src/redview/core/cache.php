@@ -66,7 +66,11 @@ class RedView_Core_Cache extends RedView_Core {
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots']) && is_array($_SESSION['_rv']['slots'])) {
       foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView::$slots[$k] = $v;
     }
-    require $this->findLoader($file);
+    
+  	$loader = $this->findLoader($file);
+  	
+    require $loader;
+    
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots'])) {
       unset($_SESSION['_rv']['slots']);
     }
@@ -84,13 +88,19 @@ class RedView_Core_Cache extends RedView_Core {
     $cachedir = $this->cachePath;
     $cache    = $cachedir . '/' . basename($realFile) . ".$sha1";
     $loader   = "$cache.loader.php";
-    if (!$this->cacheOn || !file_exists($loader) || filemtime($loader)<filemtime($file)) {
+    
+    if (!$this->cacheOn || !file_exists($loader) || filemtime($loader)<filemtime($realFile)) {
+    	
+  	  RedView::dbg_timer_start("rewriting php cache $file");
       if (!file_exists($cachedir)) mkdir($cachedir);
       $this->output = $this->tools->parser->parseFile($realFile);
       $this->sendEvent('onCache');
       file_put_contents("$cache.php", $this->output);
       $this->writeLoader($cache, $realFile);
+  	  RedView::dbg_timer_end();
+  	  
     }
+    
     return $loader;
   }
 

@@ -22,6 +22,8 @@ class RedView extends RedView_View {
   public static $slots=array();
   
   public static $test=0;
+  
+  public static $debug=0;
   /** 
       init
       
@@ -141,7 +143,18 @@ class RedView extends RedView_View {
   public static function fromXml ($xml) {
     return self::$tools->xml->fromXml($xml);
   }
-  
+
+  public static function dbg_log ($msg) {
+    if (self::$debug) echo "[$msg]        <br />";
+  }
+  public static $dbg_timers = array();
+  public static function dbg_timer_start ($msg) {
+    self::$dbg_timers[] = array(microtime(), $msg);
+  }
+  public static function dbg_timer_end () {
+  	$timer = array_pop(self::$dbg_timers);
+    self::dbg_log(number_format(microtime() - $timer[0], 6) . ' : ' . $timer[1]);
+  }
   
   
 }
