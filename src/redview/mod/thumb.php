@@ -102,6 +102,8 @@ class RedView_Mod_Thumb extends RedView_Mod {
     $def_height = isset ($settings->height) ? $settings->height : 0;  
     $desaturate = isset ($settings->desaturate) && $settings->desaturate;
     $fitToScale = !$settings->clamp;
+    $factor_w = 1;
+    $factor_h = 1;
 
     if ($def_width > $this->maxSize) $def_width = $this->maxSize;
     if ($def_height > $this->maxSize) $def_height = $this->maxSize;
@@ -136,9 +138,7 @@ class RedView_Mod_Thumb extends RedView_Mod {
       $src = @imagecreatefrompng($upfile);
     }
      
-    $size = getimagesize($upfile);
-    $width = $size[0];
-    $height = $size[1];
+    list ($width, $height) = getimagesize($upfile);
 
     if (!$def_width) {
       $factor_h = $height / $def_height;
@@ -151,42 +151,45 @@ class RedView_Mod_Thumb extends RedView_Mod {
     
     $adj_width = $def_width;
     $adj_height = $def_height;
+    $new_width = $def_width;
+    $new_height = $def_height;
     
-    // Scale to fit w/ Aspect Ratio
-    if($fitToScale) {
-      if ($def_height > $def_width) {
-        $adj_height = $height / ($width / $def_width);
+    if (!$settings->tile) {
+    
+      // Scale to fit w/ Aspect Ratio
+      if ($fitToScale) {
+        if ($def_height > $def_width) {
+          $adj_height = $height / ($width / $def_width);
+        }
+        else {
+          $adj_width = $width / ($height / $def_height);
+        }
       }
-      else {
-        $adj_width = $width / ($height / $def_height);
+      
+      if ($adj_width > $def_width) {
+      	$scale = $def_width / $adj_width;
+      	$adj_width = $def_width;
+      	$adj_height *= $scale;
       }
+      if ($adj_height > $def_height) {
+      	$scale = $def_height / $adj_height;
+      	$adj_height = $def_height;
+      	$adj_width *= $scale;
+      }
+      
+      $factor_w = $width / $adj_width;
+      $factor_h = $height / $adj_height;
+      
+      if ($factor_w > $factor_h) {
+        $new_height = floor($adj_height * $factor_h);
+        $new_width = floor($adj_width  * $factor_h);
+      } else {
+        $new_height = floor($adj_height * $factor_w);
+        $new_width = floor($adj_width  * $factor_w);
+      }
+    
     }
     
-    if ($adj_width > $def_width) {
-    	$scale = $def_width / $adj_width;
-    	$adj_width = $def_width;
-    	$adj_height *= $scale;
-    }
-    if ($adj_height > $def_height) {
-    	$scale = $def_height / $adj_height;
-    	$adj_height = $def_height;
-    	$adj_width *= $scale;
-    }
-    
-
-    $factor_w = $width / $adj_width;
-    $factor_h = $height / $adj_height;
-
-    
-    if ($factor_w > $factor_h) {
-      $new_height = floor($adj_height * $factor_h);
-      $new_width = floor($adj_width  * $factor_h);
-    } else {
-      $new_height = floor($adj_height * $factor_w);
-      $new_width = floor($adj_width  * $factor_w);
-    }
-    
-
     if ((!$clamp[0]) && $clamp[0]!=='0') $clamp[0] = 50;
     if ((!$clamp[1]) && $clamp[1]!=='0') $clamp[1] = 50;
 
@@ -199,8 +202,19 @@ class RedView_Mod_Thumb extends RedView_Mod {
     $trans_colour = imagecolorallocatealpha($dst, 0, 0, 0, 127);
     imagefill($dst, 0, 0, $trans_colour);
     
-    @imagecopyresampled($dst, $src, 0, 0, $src_x, $src_y,
-        $adj_width, $adj_height, $new_width, $new_height);
+    if (!$settings->tile) {
+    
+      @imagecopyresampled($dst, $src, 0, 0, $src_x, $src_y,
+          $adj_width, $adj_height, $new_width, $new_height);
+          
+    } else {
+      for ($x = 0; $x < $adj_width; $x += $width) {
+        for ($y = 0; $y < $adj_width; $y += $height) {
+          @imagecopy($dst, $src, $x, $y, 0, 0, $width, $height);
+        }
+      }
+        
+    }
 
     if ($desaturate) {
       imagefilter($dst, IMG_FILTER_GRAYSCALE); 

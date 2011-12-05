@@ -18,6 +18,8 @@ class RedView_Mod_Thumb_Settings {
   
   public $bottomRight;
   
+  public $tile;
+  
   public function __construct($p1, $p2=null) {
     if ($p2) $this->fromPath($p1, $p2);
     else $this->fromNode($p1);
@@ -33,6 +35,7 @@ class RedView_Mod_Thumb_Settings {
     $this->overlay = $node->getAttribute('overlay');
     $this->topLeft = $node->getAttribute('topleft');
     $this->bottomRight = $node->getAttribute('bottomright');
+    $this->tile = $node->getAttribute('tile');
   }
   
   public function fromPath ($thumbPath, $path) {
@@ -71,6 +74,9 @@ class RedView_Mod_Thumb_Settings {
         case 'br': 
           $this->bottomRight = $v;
           break;
+        case 't': 
+          $this->tile = $v;
+          break;
       }
     }
     
@@ -85,6 +91,7 @@ class RedView_Mod_Thumb_Settings {
         ($this->overlay ? '-o_' . str_replace('/', '|', $this->overlay) : '') . 
         ($this->topLeft ? '-tl_' . $this->topLeft : '') .
         ($this->bottomRight ? '-br_' . $this->bottomRight : '') .
+        ($this->tile ? '-t_' . $this->tile : '') .
         // TODO: put slash here?
         $this->source;
   }
