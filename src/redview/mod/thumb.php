@@ -197,6 +197,8 @@ class RedView_Mod_Thumb extends RedView_Mod {
     $src_y = ceil(($height - $new_height) * ($clamp[1] / 100));
 
     $dst = ImageCreateTrueColor($adj_width, $adj_height);
+    // Turn on alpha blending 
+    imagealphablending($dst, true); 
     
     imagesavealpha($dst, true);
     $trans_colour = imagecolorallocatealpha($dst, 0, 0, 0, 127);
@@ -209,7 +211,7 @@ class RedView_Mod_Thumb extends RedView_Mod {
           
     } else {
       for ($x = 0; $x < $adj_width; $x += $width) {
-        for ($y = 0; $y < $adj_width; $y += $height) {
+        for ($y = 0; $y < $adj_height; $y += $height) {
           @imagecopy($dst, $src, $x, $y, 0, 0, $width, $height);
         }
       }
