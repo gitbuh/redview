@@ -62,6 +62,7 @@ class RedView_Core_Cache extends RedView_Core {
    * 		path to the view to load.
    */
   public function load ($view) {
+  
     $file = "$view.html";
     if (isset($_SESSION['_rv']) && isset($_SESSION['_rv']['slots']) && is_array($_SESSION['_rv']['slots'])) {
       foreach ($_SESSION['_rv']['slots'] as $k=>$v) RedView::$slots[$k] = $v;
@@ -89,8 +90,13 @@ class RedView_Core_Cache extends RedView_Core {
     $cache    = $cachedir . '/' . basename($realFile) . ".$sha1";
     $loader   = "$cache.loader.php";
     
-    if (!$this->cacheOn || !file_exists($loader) || filemtime($loader)<filemtime($realFile)) {
-    	
+    echo $this->cacheOn;
+    
+    if (
+        (!$this->cacheOn) || 
+        (!file_exists($loader)) || 
+        (filemtime($loader) < filemtime($realFile))
+    ){	
   	  RedView::dbg_timer_start("rewriting php cache $file");
       if (!file_exists($cachedir)) mkdir($cachedir);
       $this->output = $this->tools->parser->parseFile($realFile);

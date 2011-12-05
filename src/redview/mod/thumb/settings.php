@@ -14,6 +14,10 @@ class RedView_Mod_Thumb_Settings {
   
   public $mask;
   
+  public $topLeft;
+  
+  public $bottomRight;
+  
   public function __construct($p1, $p2=null) {
     if ($p2) $this->fromPath($p1, $p2);
     else $this->fromNode($p1);
@@ -26,6 +30,9 @@ class RedView_Mod_Thumb_Settings {
     $this->desaturate = $node->getAttribute('desaturate');
     $this->source = $node->getAttribute('src');
     $this->mask = $node->getAttribute('mask');
+    $this->overlay = $node->getAttribute('overlay');
+    $this->topLeft = $node->getAttribute('topleft');
+    $this->bottomRight = $node->getAttribute('bottomright');
   }
   
   public function fromPath ($thumbPath, $path) {
@@ -55,6 +62,15 @@ class RedView_Mod_Thumb_Settings {
         case 'm': 
           $this->mask = str_replace('|', '/', $v);
           break;
+        case 'o': 
+          $this->overlay = str_replace('|', '/', $v);
+          break;
+        case 'tl': 
+          $this->topLeft = $v;
+          break;
+        case 'br': 
+          $this->bottomRight = $v;
+          break;
       }
     }
     
@@ -62,12 +78,15 @@ class RedView_Mod_Thumb_Settings {
 
   public function toPath ($thumbPath) {
     return  "/$thumbPath/".
-            'w_' . $this->width . '-h_' . $this->height .
-            ($this->clamp ? '-c_' . $this->clamp : '') .
-            ($this->desaturate ? '-d_' . $this->desaturate : '') . 
-            ($this->mask ? '-m_' . str_replace('/', '|', $this->mask) : '') . 
-            // TODO: put slash here?
-            $this->source;
+        'w_' . $this->width . '-h_' . $this->height .
+        ($this->clamp ? '-c_' . $this->clamp : '') .
+        ($this->desaturate ? '-d_' . $this->desaturate : '') . 
+        ($this->mask ? '-m_' . str_replace('/', '|', $this->mask) : '') . 
+        ($this->overlay ? '-o_' . str_replace('/', '|', $this->overlay) : '') . 
+        ($this->topLeft ? '-tl_' . $this->topLeft : '') .
+        ($this->bottomRight ? '-br_' . $this->bottomRight : '') .
+        // TODO: put slash here?
+        $this->source;
   }
   
 }

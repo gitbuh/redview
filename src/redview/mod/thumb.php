@@ -61,9 +61,8 @@ class RedView_Mod_Thumb extends RedView_Mod {
   
     $img->setAttribute('src', $settings->toPath($this->thumbPath));
     
-    
     foreach ($node->attributes as $attrib) {
-      $hiddenAttributes = array('src', 'clamp', 'desaturate');
+      $hiddenAttributes = array('src', 'clamp', 'desaturate', 'mask', 'overlay', 'topleft', 'bottomright');
       if (!$settings->clamp) {
         $hiddenAttributes[]='width';
         $hiddenAttributes[]='height'; 
@@ -75,7 +74,7 @@ class RedView_Mod_Thumb extends RedView_Mod {
     
     $x = str_replace('-&gt;', '->', $doc->saveXHTML($img));
 
-    $pi = $doc->createProcessingInstruction('php', " echo <<<RV_CACHE\n$x\nRV_CACHE;\n");
+    $pi = $doc->createProcessingInstruction('php', " echo <<<RV_THUMB\n$x\nRV_THUMB;\n");
     
     $node->parentNode->replaceChild($pi, $node);
   
@@ -207,13 +206,16 @@ class RedView_Mod_Thumb extends RedView_Mod {
       imagefilter($dst, IMG_FILTER_GRAYSCALE); 
     }
     
-    
     if ($settings->mask) {
       $mask = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].'/'.$settings->mask);
-      $this->imagealphamask($dst, $mask);
+      $this->imagealphamask($dst, $mask, $settings);
       $make_png = true;
     }
     
+    if ($settings->overlay) {
+      $overlay = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].'/'.$settings->overlay);
+      $this->imageoverlay($dst, $overlay, $settings);
+    }
     
     $dir = substr($thumb_file, 0, strrpos($thumb_file, '/'));
     
@@ -243,7 +245,7 @@ class RedView_Mod_Thumb extends RedView_Mod {
   }
   
   
-  protected function imagealphamask( &$picture, $mask ) {
+  protected function imagealphamask( &$picture, $mask, $settings ) {
     // Get sizes and set up new picture
     $xSize = imagesx( $picture );
     $ySize = imagesy( $picture );
@@ -251,27 +253,108 @@ class RedView_Mod_Thumb extends RedView_Mod {
     imagesavealpha( $newPicture, true );
     imagefill( $newPicture, 0, 0, imagecolorallocatealpha( $newPicture, 0, 0, 0, 127 ) );
     
-    // Resize mask if necessary
-    if( $xSize != imagesx( $mask ) || $ySize != imagesy( $mask ) ) {
-        $tempPic = imagecreatetruecolor( $xSize, $ySize );
-        imagecopyresampled( $tempPic, $mask, 0, 0, 0, 0, $xSize, $ySize, imagesx( $mask ), imagesy( $mask ) );
-        imagedestroy( $mask );
-        $mask = $tempPic;
-    }
+    // Resize mask
+    $tempPic = imagecreatetruecolor( $xSize, $ySize );
+    $this->imageoverlay($tempPic, $mask, $settings);
+    imagedestroy($mask);
+    $mask = $tempPic;
 
     // Perform pixel-based alpha map application
     for( $x = 0; $x < $xSize; $x++ ) {
-        for( $y = 0; $y < $ySize; $y++ ) {
-            $alpha = imagecolorsforindex( $mask, imagecolorat( $mask, $x, $y ) );
-            $alpha = 127 - floor( $alpha[ 'red' ] / 2 );
-            $color = imagecolorsforindex( $picture, imagecolorat( $picture, $x, $y ) );
-            imagesetpixel( $newPicture, $x, $y, imagecolorallocatealpha( $newPicture, $color[ 'red' ], $color[ 'green' ], $color[ 'blue' ], $alpha ) );
-        }
+      for( $y = 0; $y < $ySize; $y++ ) {
+        $alpha = imagecolorsforindex( $mask, imagecolorat( $mask, $x, $y ) );
+        $alpha = 127 - floor( $alpha[ 'red' ] / 2 );
+        $color = imagecolorsforindex( $picture, imagecolorat( $picture, $x, $y ) );
+        imagesetpixel( $newPicture, $x, $y, imagecolorallocatealpha( $newPicture, $color[ 'red' ], $color[ 'green' ], $color[ 'blue' ], $alpha ) );
+      }
     }
     
     // Copy back to original picture
     imagedestroy( $picture );
     $picture = $newPicture;
-}
+  }
+  
+  
+  protected function imageoverlay(&$background, $overlay, $settings) {
+   
+    // background image: width, height
+    $iw = imagesx($background); 
+    $ih = imagesy($background); 
+    
+    // overlay: width, height
+    $ow = imagesx($overlay); 
+    $oh = imagesy($overlay); 
+   
+   
+    if ($settings->topLeft && !$settings->bottomRight)  {
+      $settings->bottomRight = $settings->topLeft;
+    }
+    if ($settings->bottomRight && !$settings->topLeft)  {
+      $settings->topLeft = $settings->bottomRight;
+    }
+    if (!$settings->topLeft)  {
+      $w = round($ow/3);
+      $w2 = $iw / 2 | 0;
+      $h = round($oh/3);
+      $h2 = $ih / 2 | 0;
+      $settings->topLeft = ($w > $w2 ? $w2 : $w).'x'.($h > $h2 ? $h2 : $h);
+      $settings->bottomRight = $settings->topLeft;
+    }
+    
+    // corners: left width, top height
+    list ($lw, $th) = isset($settings->topLeft) ? 
+        explode("x", $settings->topLeft) : array(0, 0);
+    // corners: right width, bottom height
+    list ($rw, $bh) = isset($settings->bottomRight) ? 
+        explode("x", $settings->bottomRight) : array(0, 0);
+    
+    // sides: top (and bottom) width
+    $tw = $ow - $lw - $rw;
+    // sides: bg image top (and bottom) width
+    $itw = $iw - $lw - $rw;
+    // sides: left (and right) height
+    $lh = $oh - $th - $bh;
+    // sides: bg image left (and right) height
+    $ilh = $ih - $th - $bh;
+    
+    // Turn on alpha blending 
+    imagealphablending($background, true); 
+    
+    // top left
+    imagecopy($background, $overlay, 0, 0, 0, 0, $lw, $th); 
+        
+    // top right
+    imagecopy($background, $overlay, 
+        $iw - $rw, 0, $ow - $rw, 0, $rw, $th); 
+        
+    // bottom left
+    imagecopy($background, $overlay, 
+        0, $ih - $bh, 0, $oh - $bh, $lw, $bh); 
+        
+    // bottom right
+    imagecopy($background, $overlay, 
+        $iw - $rw, $ih - $bh, $ow - $rw, $oh - $bh, $rw, $bh); 
+        
+    // top side
+    imagecopyresampled($background, $overlay, 
+        $lw, 0, $lw, 0, $itw, $th, $tw, $th); 
+        
+    // bottom side
+    imagecopyresampled($background, $overlay, 
+        $lw, $ih - $bh, $lw, $oh - $bh, $itw, $bh, $tw, $bh); 
+        
+    // left side
+    imagecopyresampled($background, $overlay, 
+        0, $th, 0, $th, $lw, $ilh, $lw, $lh); 
+        
+    // right side
+    imagecopyresampled($background, $overlay, 
+        $iw - $rw, $th, $ow - $rw, $th, $rw, $ilh, $rw, $lh); 
+        
+    // inner
+    imagecopyresampled($background, $overlay, 
+        $rw, $th, $rw, $th, 
+        $itw, $ilh, $tw, $lh); 
+  }
   
 }
